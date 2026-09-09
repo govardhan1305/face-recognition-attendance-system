@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SmartFace Attendance Management System</title>
+
+<style>
+:root {
+    --primary: #123b63;
+    --primary2: #1c5d91;
+    --accent: #0ea5a4;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --bg: #f3f6fa;
+    --card: #ffffff;
+    --text: #172033;
+    --muted: #6b7280;
+    --border: #e3e8ef;
+    --shadow: 0 8px 25px rgba(16, 42, 67, .08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* HEADER */
+
+.topbar {
+    height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.logo {
+    width: 45px;
+    height: 45px;
+    background: var(--primary);
+    color: white;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+    font-size: 19px;
+}
+
+.brand h1 {
+    font-size: 18px;
+}
+
+.brand small {
+    color: var(--muted);
+    display: block;
+    margin-top: 3px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--success);
+    font-size: 13px;
+}
+
+.live-dot {
+    width: 9px;
+    height: 9px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: blink 1.4s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: .3; }
+}
+
+.admin {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    background: #e8eef5;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* LAYOUT */
+
+.layout {
+    display: flex;
+}
+
+.sidebar {
+    width: 245px;
+    min-height: calc(100vh - 72px);
+    background: #102f4f;
+    color: white;
+    padding: 22px 14px;
+    position: fixed;
+    top: 72px;
+    bottom: 0;
+    left: 0;
+}
+
+.sidebar-title {
+    font-size: 11px;
+    color: #9fb5ca;
+    margin: 15px 13px 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-item {
+    padding: 13px 14px;
+    margin: 4px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+    color: #dce7f1;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: #1b4c76;
+    color: white;
+}
+
+.main {
+    margin-left: 245px;
+    width: calc(100% - 245px);
+    padding: 27px;
+}
+
+/* PAGE TITLE */
+
+.page-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-title h2 {
+    font-size: 25px;
+}
+
+.page-title p {
+    color: var(--muted);
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.date-box {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* STATISTICS */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+    margin-bottom: 22px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    background: #edf4fa;
+}
+
+.stat-value {
+    font-size: 27px;
+    font-weight: 700;
+    margin-top: 11px;
+}
+
+.stat-change {
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+.green {
+    color: var(--success);
+}
+
+.red {
+    color: var(--danger);
+}
+
+.orange {
+    color: var(--warning);
+}
+
+/* CONTENT GRID */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.card-header {
+    padding: 17px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    font-size: 16px;
+}
+
+.card-header span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* CAMERA */
+
+.camera-container {
+    padding: 18px;
+}
+
+.camera {
+    height: 355px;
+    background: #071522;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.camera-placeholder {
+    color: #a8bacb;
+    text-align: center;
+}
+
+.camera-placeholder .camera-icon {
+    font-size: 45px;
+    margin-bottom: 12px;
+}
+
+.scan-frame {
+    width: 210px;
+    height: 250px;
+    border: 2px solid #28d8d2;
+    border-radius: 15px;
+    position: absolute;
+    display: none;
+}
+
+.scan-line {
+    height: 2px;
+    width: 100%;
+    background: #28d8d2;
+    position: absolute;
+    top: 0;
+    animation: scanning 2.2s infinite;
+    box-shadow: 0 0 12px #28d8d2;
+}
+
+@keyframes scanning {
+    0% { top: 0; }
+    50% { top: 100%; }
+    100% { top: 0; }
+}
+
+.camera-status {
+    position: absolute;
+    left: 15px;
+    bottom: 13px;
+    background: rgba(0,0,0,.65);
+    padding: 8px 11px;
+    color: white;
+    font-size: 12px;
+    border-radius: 6px;
+}
+
+.camera-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    border-radius: 7px;
+    padding: 11px 17px;
+    font-weight: 600;
+}
+
+.primary-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.secondary-btn {
+    background: #edf2f7;
+    color: var(--primary);
+}
+
+.success-btn {
+    background: var(--success);
+    color: white;
+}
+
+button:hover {
+    opacity: .9;
+}
+
+/* RECOGNITION */
+
+.recognition {
+    padding: 20px;
+}
+
+.recognition-box {
+    background: #f5f8fb;
+    border: 1px solid var(--border);
+    padding: 18px;
+    border-radius: 10px;
+}
+
+.recognition-user {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.student-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #dce8f2;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.student-info h4 {
+    font-size: 16px;
+}
+
+.student-info p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.confidence {
+    margin-top: 18px;
+}
+
+.confidence-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.progress {
+    height: 8px;
+    background: #dfe6ed;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.progress-bar {
+    width: 96%;
+    height: 100%;
+    background: var(--success);
+}
+
+.attendance-status {
+    margin-top: 18px;
+    padding: 11px;
+    text-align: center;
+    background: #eaf7ee;
+    color: var(--success);
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* TABLE */
+
+.table-card {
+    margin-top: 20px;
+}
+
+.table-tools {
+    display: flex;
+    gap: 9px;
+}
+
+.search {
+    border: 1px solid var(--border);
+    padding: 9px 12px;
+    border-radius: 7px;
+    outline: none;
+}
+
+select {
+    border: 1px solid var(--border);
+    padding: 9px 12px;
+    border-radius: 7px;
+    background: white;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid #edf0f3;
+    font-size: 13px;
+}
+
+th {
+    color: #657386;
+    font-weight: 600;
+    background: #fafbfd;
+}
+
+.badge {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.present {
+    background: #eaf7ee;
+    color: var(--success);
+}
+
+.late {
+    background: #fff5df;
+    color: var(--warning);
+}
+
+.absent {
+    background: #feecec;
+    color: var(--danger);
+}
+
+/* ACTIVITY */
+
+.activity {
+    padding: 8px 20px 20px;
+}
+
+.activity-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #edf0f3;
+}
+
+.activity-icon {
+    width: 34px;
+    height: 34px;
+    background: #eaf7ee;
+    color: var(--success);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+}
+
+.activity-text strong {
+    display: block;
+    font-size: 13px;
+}
+
+.activity-text span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    color: #8793a1;
+    font-size: 11px;
+    padding: 25px 0 10px;
+}
+
+/* TOAST */
+
+.toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background: #12263a;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    display: none;
+    z-index: 500;
+    font-size: 13px;
+}
+
+/* MOBILE */
+
+@media(max-width: 1000px) {
+
+    .sidebar {
+        width: 70px;
+    }
+
+    .sidebar-title,
+    .nav-item span {
+        display: none;
+    }
+
+    .nav-item {
+        justify-content: center;
+    }
+
+    .main {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 650px) {
+
+    .topbar {
+        padding: 0 14px;
+    }
+
+    .brand h1 {
+        font-size: 14px;
+    }
+
+    .brand small,
+    .live-indicator {
+        display: none;
+    }
+
+    .main {
+        padding: 15px;
+    }
+
+    .page-title {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .page-title h2 {
+        font-size: 20px;
+    }
+
+    .date-box {
+        display: none;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .stat-value {
+        font-size: 22px;
+    }
+
+    .camera {
+        height: 280px;
+    }
+
+    .camera-controls {
+        flex-wrap: wrap;
+    }
+
+    .table-tools {
+        flex-direction: column;
+    }
+
+    .search,
+    select {
+        width: 100%;
+    }
+
+    .admin {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="logo">SF</div>
+
+        <div>
+            <h1>SmartFace Attendance</h1>
+            <small>Institutional Attendance Management System</small>
+        </div>
+    </div>
+
+    <div class="header-right">
+
+        <div class="live-indicator">
+            <div class="live-dot"></div>
+            System Online
+        </div>
+
+        <div class="admin">
+            <div>
+                <strong>Administrator</strong>
+            </div>
+
+            <div class="avatar">AD</div>
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-title">Main Menu</div>
+
+    <div class="nav-item active">
+        📊 <span>Dashboard</span>
+    </div>
+
+    <div class="nav-item">
+        📷 <span>Face Recognition</span>
+    </div>
+
+    <div class="nav-item">
+        👥 <span>Students</span>
+    </div>
+
+    <div class="nav-item">
+        📋 <span>Attendance</span>
+    </div>
+
+    <div class="nav-item">
+        📈 <span>Reports</span>
+    </div>
+
+    <div class="sidebar-title">Administration</div>
+
+    <div class="nav-item">
+        ⚙️ <span>System Settings</span>
+    </div>
+
+    <div class="nav-item">
+        🔔 <span>Notifications</span>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <section class="page-title">
+
+        <div>
+            <h2>Attendance Dashboard</h2>
+            <p>Real-time face recognition and attendance monitoring</p>
+        </div>
+
+        <div class="date-box" id="dateTime">
+            Loading...
+        </div>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-label">Total Students</div>
+                <div class="stat-icon">👥</div>
+            </div>
+
+            <div class="stat-value">248</div>
+
+            <div class="stat-change green">
+                ↑ 4 new this semester
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-label">Present Today</div>
+                <div class="stat-icon">✓</div>
+            </div>
+
+            <div class="stat-value" id="presentCount">186</div>
+
+            <div class="stat-change green">
+                75.0% attendance
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-label">Late Arrivals</div>
+                <div class="stat-icon">⏱</div>
+            </div>
+
+            <div class="stat-value">17</div>
+
+            <div class="stat-change orange">
+                6.8% of students
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-top">
+                <div class="stat-label">Absent Today</div>
+                <div class="stat-icon">!</div>
+            </div>
+
+            <div class="stat-value" id="absentCount">45</div>
+
+            <div class="stat-change red">
+                Requires attention
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CAMERA + RECOGNITION -->
+
+    <section class="dashboard-grid">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Live Face Recognition</h3>
+                <span>Camera 01 • Main Entrance</span>
+            </div>
+
+            <div class="camera-container">
+
+                <div class="camera">
+
+                    <video id="video" autoplay playsinline></video>
+
+                    <div class="camera-placeholder" id="placeholder">
+
+                        <div class="camera-icon">📷</div>
+
+                        <strong>Camera Ready</strong>
+
+                        <p style="font-size:12px;margin-top:5px;">
+                            Start camera to begin face scanning
+                        </p>
+
+                    </div>
+
+                    <div class="scan-frame" id="scanFrame">
+                        <div class="scan-line"></div>
+                    </div>
+
+                    <div class="camera-status" id="cameraStatus">
+                        Camera inactive
+                    </div>
+
+                </div>
+
+
+                <div class="camera-controls">
+
+                    <button
+                        class="primary-btn"
+                        id="cameraBtn"
+                        onclick="startCamera()">
+                        ▶ Start Camera
+                    </button>
+
+                    <button
+                        class="success-btn"
+                        onclick="recognizeStudent()">
+                        🔍 Scan Face
+                    </button>
+
+                    <button
+                        class="secondary-btn"
+                        onclick="stopCamera()">
+                        ■ Stop
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECOGNITION RESULT -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>Recognition Result</h3>
+
+                <span id="recognitionTime">
+                    Waiting for scan
+                </span>
+
+            </div>
+
+
+            <div class="recognition">
+
+                <div class="recognition-box">
+
+                    <div class="recognition-user">
+
+                        <div class="student-avatar" id="studentAvatar">
+                            ?
+                        </div>
+
+                        <div class="student-info">
+
+                            <h4 id="studentName">
+                                No Student Detected
+                            </h4>
+
+                            <p id="studentId">
+                                Awaiting facial recognition
+                            </p>
+
+                            <p id="studentDept">
+                                —
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="confidence">
+
+                        <div class="confidence-head">
+
+                            <span>Recognition Confidence</span>
+
+                            <strong id="confidence">
+                                0%
+                            </strong>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-bar"
+                                id="confidenceBar"
+                                style="width:0%">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="attendance-status"
+                        id="attendanceStatus">
+
+                        Waiting for face recognition
+
+                    </div>
+
+
+                    <button
+                        class="success-btn"
+                        style="width:100%;margin-top:15px"
+                        onclick="markAttendance()">
+
+                        ✓ Mark Attendance
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ATTENDANCE TABLE -->
+
+    <section class="card table-card">
+
+        <div class="card-header">
+
+            <h3>Today's Attendance</h3>
+
+            <div class="table-tools">
+
+                <input
+                    class="search"
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search student..."
+                    onkeyup="filterTable()">
+
+                <select id="statusFilter" onchange="filterTable()">
+
+                    <option value="all">All Status</option>
+                    <option value="present">Present</option>
+                    <option value="late">Late</option>
+                    <option value="absent">Absent</option>
+
+                </select>
+
+                <button
+                    class="secondary-btn"
+                    onclick="exportCSV()">
+
+                    Export CSV
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table id="attendanceTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Time</th>
+                        <th>Method</th>
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="attendanceBody">
+
+                    <tr>
+                        <td>STU001</td>
+                        <td>Rahul Sharma</td>
+                        <td>BCA</td>
+                        <td>09:02 AM</td>
+                        <td>Face Recognition</td>
+                        <td><span class="badge present">Present</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>STU002</td>
+                        <td>Ananya Rao</td>
+                        <td>BCA</td>
+                        <td>09:07 AM</td>
+                        <td>Face Recognition</td>
+                        <td><span class="badge present">Present</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>STU003</td>
+                        <td>Arjun Kumar</td>
+                        <td>BSc CS</td>
+                        <td>09:18 AM</td>
+                        <td>Face Recognition</td>
+                        <td><span class="badge late">Late</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>STU004</td>
+                        <td>Priya Nair</td>
+                        <td>BCA</td>
+                        <td>09:04 AM</td>
+                        <td>Face Recognition</td>
+                        <td><span class="badge present">Present</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>STU005</td>
+                        <td>Vikram Singh</td>
+                        <td>BCom</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td><span class="badge absent">Absent</span></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECENT ACTIVITY -->
+
+    <section class="card table-card">
+
+        <div class="card-header">
+
+            <h3>Recent Recognition Activity</h3>
+
+            <span>Live updates</span>
+
+        </div>
+
+
+        <div class="activity" id="activity">
+
+            <div class="activity-item">
+
+                <div class="activity-icon">✓</div>
+
+                <div class="activity-text">
+
+                    <strong>Rahul Sharma marked present</strong>
+
+                    <span>Face recognized • 09:02 AM</span>
+
+                </div>
+
+            </div>
+
+
+            <div class="activity-item">
+
+                <div class="activity-icon">✓</div>
+
+                <div class="activity-text">
+
+                    <strong>Ananya Rao marked present</strong>
+
+                    <span>Face recognized • 09:07 AM</span>
+
+                </div>
+
+            </div>
+
+
+            <div class="activity-item">
+
+                <div class="activity-icon">⏱</div>
+
+                <div class="activity-text">
+
+                    <strong>Arjun Kumar arrived late</strong>
+
+                    <span>Face recognized • 09:18 AM</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        SmartFace Attendance Management System © 2026
+        <br>
+        BCA Final Year Project • AI-Based Attendance Monitoring
+
+    </footer>
+
+</main>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+let stream = null;
+
+let recognizedStudent = null;
+
+
+/* SAMPLE STUDENTS */
+
+const students = [
+
+    {
+        id: "STU001",
+        name: "Rahul Sharma",
+        department: "BCA",
+        initials: "RS"
+    },
+
+    {
+        id: "STU002",
+        name: "Ananya Rao",
+        department: "BCA",
+        initials: "AR"
+    },
+
+    {
+        id: "STU003",
+        name: "Arjun Kumar",
+        department: "BSc CS",
+        initials: "AK"
+    },
+
+    {
+        id: "STU004",
+        name: "Priya Nair",
+        department: "BCA",
+        initials: "PN"
+    }
+
+];
+
+
+/* CLOCK */
+
+function updateClock() {
+
+    const now = new Date();
+
+    const date = now.toLocaleDateString(
+        "en-IN",
+        {
+            weekday: "short",
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+    const time = now.toLocaleTimeString(
+        "en-IN",
+        {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        }
+    );
+
+    document.getElementById("dateTime").innerText =
+        date + " • " + time;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+
+/* CAMERA */
+
+async function startCamera() {
+
+    try {
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: "user",
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        });
+
+        const video = document.getElementById("video");
+
+        video.srcObject = stream;
+        video.style.display = "block";
+
+        document.getElementById("placeholder")
+            .style.display = "none";
+
+        document.getElementById("scanFrame")
+            .style.display = "block";
+
+        document.getElementById("cameraStatus")
+            .innerText = "Camera active • Scanning ready";
+
+        document.getElementById("cameraBtn")
+            .innerText = "● Camera Active";
+
+        showToast("Camera started successfully");
+
+    }
+
+    catch(error) {
+
+        showToast(
+            "Camera permission was denied or unavailable"
+        );
+
+    }
+
+}
+
+
+/* STOP CAMERA */
+
+function stopCamera() {
+
+    if(stream) {
+
+        stream.getTracks().forEach(
+            track => track.stop()
+        );
+
+        stream = null;
+
+    }
+
+    document.getElementById("video")
+        .style.display = "none";
+
+    document.getElementById("placeholder")
+        .style.display = "block";
+
+    document.getElementById("scanFrame")
+        .style.display = "none";
+
+    document.getElementById("cameraStatus")
+        .innerText = "Camera inactive";
+
+    document.getElementById("cameraBtn")
+        .innerText = "▶ Start Camera";
+
+    showToast("Camera stopped");
+
+}
+
+
+/* DEMO FACE RECOGNITION */
+
+function recognizeStudent() {
+
+    if(!stream) {
+
+        showToast("Please start the camera first");
+
+        return;
+
+    }
+
+    document.getElementById("cameraStatus")
+        .innerText = "Analyzing face...";
+
+    document.getElementById("attendanceStatus")
+        .innerText = "Analyzing facial features...";
+
+    document.getElementById("attendanceStatus")
+        .style.background = "#fff5df";
+
+    document.getElementById("attendanceStatus")
+        .style.color = "#d97706";
+
+
+    setTimeout(() => {
+
+        const randomStudent =
+            students[
+                Math.floor(
+                    Math.random() * students.length
+                )
+            ];
+
+        recognizedStudent = randomStudent;
+
+        const confidence =
+            Math.floor(Math.random() * 5) + 94;
+
+        document.getElementById("studentName")
+            .innerText = randomStudent.name;
+
+        document.getElementById("studentId")
+            .innerText = randomStudent.id;
+
+        document.getElementById("studentDept")
+            .innerText = randomStudent.department;
+
+        document.getElementById("studentAvatar")
+            .innerText = randomStudent.initials;
+
+        document.getElementById("confidence")
+            .innerText = confidence + "%";
+
+        document.getElementById("confidenceBar")
+            .style.width = confidence + "%";
+
+        document.getElementById("attendanceStatus")
+            .innerText =
+            "✓ Face recognized successfully";
+
+        document.getElementById("attendanceStatus")
+            .style.background = "#eaf7ee";
+
+        document.getElementById("attendanceStatus")
+            .style.color = "#16a34a";
+
+        document.getElementById("recognitionTime")
+            .innerText =
+            new Date().toLocaleTimeString(
+                "en-IN",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+        document.getElementById("cameraStatus")
+            .innerText =
+            "Face detected • Match found";
+
+        showToast(
+            randomStudent.name +
+            " recognized successfully"
+        );
+
+    }, 1800);
+
+}
+
+
+/* MARK ATTENDANCE */
+
+function markAttendance() {
+
+    if(!recognizedStudent) {
+
+        showToast(
+            "Please scan and recognize a student first"
+        );
+
+        return;
+
+    }
+
+    const now = new Date();
+
+    const time =
+        now.toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    const tbody =
+        document.getElementById(
+            "attendanceBody"
+        );
+
+    const row =
+        document.createElement("tr");
+
+    row.innerHTML = `
+
+        <td>${recognizedStudent.id}</td>
+
+        <td>${recognizedStudent.name}</td>
+
+        <td>${recognizedStudent.department}</td>
+
+        <td>${time}</td>
+
+        <td>Face Recognition</td>
+
+        <td>
+            <span class="badge present">
+                Present
+            </span>
+        </td>
+
+    `;
+
+    tbody.insertBefore(
+        row,
+        tbody.firstChild
+    );
+
+
+    /* UPDATE COUNTERS */
+
+    let present =
+        parseInt(
+            document.getElementById(
+                "presentCount"
+            ).innerText
+        );
+
+    let absent =
+        parseInt(
+            document.getElementById(
+                "absentCount"
+            ).innerText
+        );
+
+    present++;
+
+    if(absent > 0)
+        absent--;
+
+    document.getElementById(
+        "presentCount"
+    ).innerText = present;
+
+    document.getElementById(
+        "absentCount"
+    ).innerText = absent;
+
+
+    /* ACTIVITY */
+
+    const activity =
+        document.getElementById(
+            "activity"
+        );
+
+    const item =
+        document.createElement("div");
+
+    item.className = "activity-item";
+
+    item.innerHTML = `
+
+        <div class="activity-icon">
+            ✓
+        </div>
+
+        <div class="activity-text">
+
+            <strong>
+                ${recognizedStudent.name}
+                marked present
+            </strong>
+
+            <span>
+                Face recognized • ${time}
+            </span>
+
+        </div>
+
+    `;
+
+    activity.insertBefore(
+        item,
+        activity.firstChild
+    );
+
+
+    showToast(
+        "Attendance marked successfully"
+    );
+
+}
+
+
+/* SEARCH + FILTER */
+
+function filterTable() {
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value.toLowerCase();
+
+    const status =
+        document.getElementById(
+            "statusFilter"
+        ).value;
+
+    const rows =
+        document.querySelectorAll(
+            "#attendanceBody tr"
+        );
+
+    rows.forEach(row => {
+
+        const text =
+            row.innerText.toLowerCase();
+
+        const badge =
+            row.querySelector(".badge");
+
+        let rowStatus = "all";
+
+        if(badge) {
+
+            rowStatus =
+                badge.innerText
+                    .toLowerCase();
+
+        }
+
+        const searchMatch =
+            text.includes(search);
+
+        const statusMatch =
+            status === "all" ||
+            rowStatus === status;
+
+        row.style.display =
+            searchMatch && statusMatch
+                ? ""
+                : "none";
+
+    });
+
+}
+
+
+/* CSV EXPORT */
+
+function exportCSV() {
+
+    const rows =
+        document.querySelectorAll(
+            "#attendanceTable tr"
+        );
+
+    let csv = [];
+
+    rows.forEach(row => {
+
+        const cols =
+            row.querySelectorAll(
+                "th, td"
+            );
+
+        const rowData = [];
+
+        cols.forEach(col => {
+
+            rowData.push(
+                '"' +
+                col.innerText
+                    .replace(/"/g, '""') +
+                '"'
+            );
+
+        });
+
+        csv.push(rowData.join(","));
+
+    });
+
+
+    const blob =
+        new Blob(
+            [csv.join("\n")],
+            { type: "text/csv" }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+
+    link.download =
+        "attendance-report.csv";
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    showToast(
+        "Attendance report exported"
+    );
+
+}
+
+
+/* TOAST */
+
+function showToast(message) {
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+    toast.innerText = message;
+
+    toast.style.display = "block";
+
+    setTimeout(() => {
+
+        toast.style.display = "none";
+
+    }, 3000);
+
+}
+
+
+/* SIDEBAR */
+
+document
+    .querySelectorAll(".nav-item")
+    .forEach(item => {
+
+        item.addEventListener(
+            "click",
+            function() {
+
+                document
+                    .querySelectorAll(".nav-item")
+                    .forEach(
+                        nav =>
+                        nav.classList.remove(
+                            "active"
+                        )
+                    );
+
+                this.classList.add("active");
+
+                showToast(
+                    this.innerText.trim() +
+                    " module selected"
+                );
+
+            }
+        );
+
+    });
+
+</script>
+
+</body>
+</html>
