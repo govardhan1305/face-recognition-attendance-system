@@ -1,695 +1,1471 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SmartFace Attendance</title>
+<title>SmartFace | Attendance Management System</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
 
-        body {
-            background: #0b1020;
-            color: white;
-            min-height: 100vh;
-        }
+body {
+    background: #f5f7fb;
+    color: #172033;
+}
 
-        header {
-            padding: 20px;
-            text-align: center;
-            background: #11182d;
-            border-bottom: 1px solid #26304d;
-        }
+/* SIDEBAR */
 
-        header h1 {
-            font-size: 26px;
-        }
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e5e9f2;
+    padding: 22px 15px;
+    z-index: 1000;
+}
 
-        header p {
-            color: #aab3cc;
-            margin-top: 7px;
-        }
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 12px 28px;
+}
 
-        .container {
-            width: 95%;
-            max-width: 1000px;
-            margin: 25px auto;
-        }
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    background: #174ea6;
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+}
 
-        .card {
-            background: #121a30;
-            border: 1px solid #26304d;
-            border-radius: 18px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+.logo h2 {
+    font-size: 18px;
+}
 
-        .card h2 {
-            margin-bottom: 15px;
-        }
+.logo small {
+    color: #7b8497;
+    font-size: 11px;
+}
 
-        .camera-box {
-            width: 100%;
-            max-width: 650px;
-            margin: auto;
-            background: black;
-            border-radius: 18px;
-            overflow: hidden;
-            border: 2px solid #26304d;
-            position: relative;
-        }
+.menu-title {
+    color: #9aa3b5;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding: 15px 14px 8px;
+    letter-spacing: 1px;
+}
 
-        video {
-            width: 100%;
-            display: block;
-            background: black;
-        }
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 14px;
+    margin: 4px 0;
+    border-radius: 9px;
+    color: #566176;
+    cursor: pointer;
+    font-size: 14px;
+}
 
-        .buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 18px;
-        }
+.nav-item:hover,
+.nav-item.active {
+    background: #edf4ff;
+    color: #174ea6;
+    font-weight: 600;
+}
 
-        button {
-            border: none;
-            padding: 13px 18px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.nav-icon {
+    width: 20px;
+    text-align: center;
+}
 
-        .start {
-            background: #2563eb;
-            color: white;
-        }
+/* MAIN */
 
-        .scan {
-            background: #7c3aed;
-            color: white;
-        }
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+}
 
-        .stop {
-            background: #dc2626;
-            color: white;
-        }
+/* HEADER */
 
-        .attendance {
-            background: #059669;
-            color: white;
-        }
+.topbar {
+    height: 70px;
+    background: white;
+    border-bottom: 1px solid #e5e9f2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+.topbar-title h3 {
+    font-size: 20px;
+}
 
-        .result {
-            margin-top: 20px;
-            padding: 16px;
-            border-radius: 12px;
-            background: #0b1020;
-            border: 1px solid #26304d;
-        }
+.topbar-title p {
+    color: #8791a5;
+    font-size: 12px;
+    margin-top: 3px;
+}
 
-        .success {
-            color: #34d399;
-        }
+.admin {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        .error {
-            color: #f87171;
-        }
+.admin-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #174ea6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 
-        input {
-            width: 100%;
-            padding: 13px;
-            margin-top: 10px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            border: 1px solid #34405f;
-            background: #0b1020;
-            color: white;
-            font-size: 15px;
-        }
+/* CONTENT */
 
-        .register-button {
-            background: #2563eb;
-            color: white;
-            width: 100%;
-        }
+.content {
+    padding: 28px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+.page {
+    display: none;
+}
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #293451;
-            text-align: left;
-        }
+.page.active {
+    display: block;
+}
 
-        th {
-            color: #aab3cc;
-        }
+/* DASHBOARD CARDS */
 
-        .status {
-            margin-top: 15px;
-            color: #aab3cc;
-        }
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin: 22px 0;
+}
 
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 22px;
-            }
+.card {
+    background: white;
+    border: 1px solid #e5e9f2;
+    border-radius: 12px;
+    padding: 20px;
+}
 
-            .container {
-                width: 92%;
-            }
+.stat-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-            button {
-                flex: 1;
-                min-width: 100px;
-            }
+.stat-label {
+    color: #7d879a;
+    font-size: 13px;
+}
 
-            th, td {
-                font-size: 13px;
-                padding: 8px;
-            }
-        }
-    </style>
+.stat-number {
+    font-size: 27px;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: #edf4ff;
+    color: #174ea6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* GRID */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 20px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 17px;
+}
+
+.section-title h3 {
+    font-size: 16px;
+}
+
+.section-title span {
+    color: #7d879a;
+    font-size: 12px;
+}
+
+/* CAMERA */
+
+.camera-container {
+    background: #101722;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+video {
+    width: 100%;
+    min-height: 300px;
+    display: block;
+    object-fit: cover;
+    background: #101722;
+}
+
+.camera-status {
+    padding: 12px;
+    background: #172130;
+    color: #c7cfdd;
+    font-size: 13px;
+}
+
+/* BUTTONS */
+
+.buttons {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.primary {
+    background: #174ea6;
+    color: white;
+}
+
+.secondary {
+    background: #eef2f7;
+    color: #344054;
+}
+
+.success {
+    background: #138a55;
+    color: white;
+}
+
+.danger {
+    background: #d93025;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* RESULT */
+
+.result {
+    margin-top: 15px;
+    padding: 14px;
+    background: #f7f9fc;
+    border: 1px solid #e3e7ef;
+    border-radius: 8px;
+}
+
+.result-title {
+    font-size: 12px;
+    color: #7d879a;
+}
+
+.result-text {
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* FORMS */
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    color: #606b7e;
+    margin-bottom: 6px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d9dee8;
+    border-radius: 7px;
+    outline: none;
+    background: white;
+}
+
+input:focus,
+select:focus {
+    border-color: #174ea6;
+}
+
+/* TABLE */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    background: #f7f9fc;
+    color: #667085;
+    font-size: 12px;
+    padding: 12px;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #edf0f5;
+    font-size: 13px;
+}
+
+.badge {
+    background: #e9f8f0;
+    color: #138a55;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* SEARCH */
+
+.search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.search-row input {
+    max-width: 350px;
+}
+
+/* ACTIVITY */
+
+.activity {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.activity-icon {
+    width: 34px;
+    height: 34px;
+    background: #edf4ff;
+    color: #174ea6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity p {
+    font-size: 13px;
+}
+
+.activity small {
+    color: #929bad;
+}
+
+/* SYSTEM */
+
+.status-box {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.online {
+    color: #138a55;
+    font-weight: 600;
+}
+
+/* MOBILE */
+
+.mobile-menu {
+    display: none;
+}
+
+@media(max-width: 900px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: 0.3s;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .mobile-menu {
+        display: block;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 550px) {
+
+    .content {
+        padding: 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .topbar-title h3 {
+        font-size: 17px;
+    }
+}
+</style>
 </head>
+
 
 <body>
 
-<header>
-    <h1>SmartFace Attendance</h1>
-    <p>Real-time AI Face Recognition Attendance System</p>
-</header>
+<!-- SIDEBAR -->
 
-<div class="container">
+<aside class="sidebar" id="sidebar">
 
-    <!-- CAMERA -->
-    <div class="card">
+    <div class="logo">
 
-        <h2>📷 Face Recognition</h2>
-
-        <div class="camera-box">
-            <video id="video" autoplay playsinline></video>
+        <div class="logo-icon">
+            👤
         </div>
 
-        <canvas id="canvas" style="display:none;"></canvas>
-
-        <div class="buttons">
-
-            <button class="start" onclick="startCamera()">
-                ▶ Start Camera
-            </button>
-
-            <button class="scan" onclick="scanFace()" id="scanBtn" disabled>
-                🔍 Scan Face
-            </button>
-
-            <button class="stop" onclick="stopCamera()">
-                ⏹ Stop Camera
-            </button>
-
-        </div>
-
-        <div id="cameraStatus" class="status">
-            Camera is not started.
-        </div>
-
-        <div id="result" class="result">
-            <strong>Recognition Result</strong>
-            <p id="resultText">No face scanned yet.</p>
+        <div>
+            <h2>SmartFace</h2>
+            <small>Attendance Portal</small>
         </div>
 
     </div>
 
 
-    <!-- REGISTER STUDENT -->
+    <div class="menu-title">
+        Main
+    </div>
 
-    <div class="card">
+    <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <span class="nav-icon">▦</span>
+        Dashboard
+    </div>
 
-        <h2>👤 Register Student</h2>
-
-        <input
-            type="text"
-            id="studentName"
-            placeholder="Enter student name"
-        >
-
-        <input
-            type="text"
-            id="studentId"
-            placeholder="Enter student ID"
-        >
-
-        <button
-            class="register-button"
-            onclick="registerStudent()">
-            Register Face
-        </button>
-
-        <p id="registerStatus" class="status"></p>
-
+    <div class="nav-item" onclick="showPage('recognition', this)">
+        <span class="nav-icon">◉</span>
+        Face Recognition
     </div>
 
 
-    <!-- ATTENDANCE -->
-
-    <div class="card">
-
-        <h2>📊 Today's Attendance</h2>
-
-        <button
-            class="attendance"
-            onclick="loadAttendance()">
-            🔄 Refresh Attendance
-        </button>
-
-        <table>
-
-            <thead>
-                <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-
-            <tbody id="attendanceTable">
-
-                <tr>
-                    <td colspan="3">
-                        No attendance loaded.
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
-
+    <div class="menu-title">
+        Management
     </div>
 
-</div>
+    <div class="nav-item" onclick="showPage('register', this)">
+        <span class="nav-icon">+</span>
+        Register Student
+    </div>
+
+    <div class="nav-item" onclick="showPage('students', this)">
+        <span class="nav-icon">♙</span>
+        Students
+    </div>
+
+    <div class="nav-item" onclick="showPage('attendance', this)">
+        <span class="nav-icon">✓</span>
+        Attendance
+    </div>
+
+    <div class="nav-item" onclick="showPage('reports', this)">
+        <span class="nav-icon">▤</span>
+        Reports
+    </div>
+
+
+    <div class="menu-title">
+        System
+    </div>
+
+    <div class="nav-item" onclick="showPage('system', this)">
+        <span class="nav-icon">⚙</span>
+        System Status
+    </div>
+
+    <div class="nav-item" onclick="showPage('admin', this)">
+        <span class="nav-icon">●</span>
+        Admin Profile
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div class="mobile-menu" onclick="toggleSidebar()">
+            ☰
+        </div>
+
+        <div class="topbar-title">
+            <h3 id="pageTitle">Dashboard</h3>
+            <p>Face Recognition Attendance Management System</p>
+        </div>
+
+        <div class="admin">
+
+            <div>
+                <strong>Administrator</strong>
+            </div>
+
+            <div class="admin-avatar">
+                AD
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <section class="content">
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <div class="page active" id="dashboard">
+
+            <h2>Dashboard</h2>
+
+            <p style="color:#7d879a;margin-top:5px;">
+                Welcome to SmartFace Attendance Portal
+            </p>
+
+
+            <div class="cards">
+
+                <div class="card stat-card">
+
+                    <div>
+                        <div class="stat-label">
+                            Total Students
+                        </div>
+
+                        <div class="stat-number" id="totalStudents">
+                            —
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        👥
+                    </div>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div>
+                        <div class="stat-label">
+                            Present Today
+                        </div>
+
+                        <div class="stat-number" id="presentToday">
+                            —
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div>
+                        <div class="stat-label">
+                            Attendance Rate
+                        </div>
+
+                        <div class="stat-number" id="attendanceRate">
+                            —
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        %
+                    </div>
+
+                </div>
+
+
+                <div class="card stat-card">
+
+                    <div>
+                        <div class="stat-label">
+                            System Status
+                        </div>
+
+                        <div class="stat-number" style="font-size:18px;">
+                            Online
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        ●
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid">
+
+                <div class="card">
+
+                    <div class="section-title">
+                        <h3>Today's Attendance</h3>
+
+                        <span id="todayDate"></span>
+                    </div>
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="dashboardTable">
+
+                                <tr>
+                                    <td colspan="4">
+                                        Loading...
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="section-title">
+                        <h3>Recent Activity</h3>
+                    </div>
+
+                    <div id="activity">
+
+                        <div class="activity">
+
+                            <div class="activity-icon">
+                                ✓
+                            </div>
+
+                            <div>
+                                <p>System initialized</p>
+                                <small>Ready for recognition</small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= RECOGNITION ================= -->
+
+        <div class="page" id="recognition">
+
+            <h2>Face Recognition</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                Scan a registered student's face to record attendance.
+            </p>
+
+
+            <div class="card">
+
+                <div class="camera-container">
+
+                    <video id="video" autoplay playsinline></video>
+
+                    <div class="camera-status" id="cameraStatus">
+                        Camera is not started.
+                    </div>
+
+                </div>
+
+
+                <canvas id="canvas" style="display:none;"></canvas>
+
+
+                <div class="buttons">
+
+                    <button class="primary"
+                            onclick="startCamera()">
+                        ▶ Start Camera
+                    </button>
+
+                    <button class="success"
+                            onclick="scanFace()"
+                            id="scanBtn"
+                            disabled>
+                        🔍 Scan Face
+                    </button>
+
+                    <button class="danger"
+                            onclick="stopCamera()">
+                        ■ Stop Camera
+                    </button>
+
+                </div>
+
+
+                <div class="result">
+
+                    <div class="result-title">
+                        RECOGNITION RESULT
+                    </div>
+
+                    <div class="result-text"
+                         id="resultText">
+                        No face scanned yet.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= REGISTER ================= -->
+
+        <div class="page" id="register">
+
+            <h2>Register Student</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                Register a student's face in the recognition system.
+            </p>
+
+
+            <div class="card">
+
+                <div class="form-group">
+
+                    <label>
+                        Student Name
+                    </label>
+
+                    <input
+                        id="studentName"
+                        type="text"
+                        placeholder="Enter full name">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Student ID
+                    </label>
+
+                    <input
+                        id="studentId"
+                        type="text"
+                        placeholder="Example: NDC001">
+
+                </div>
+
+
+                <button
+                    class="primary"
+                    onclick="registerStudent()">
+
+                    Register Face
+
+                </button>
+
+
+                <p id="registerStatus"
+                   style="margin-top:12px;">
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= STUDENTS ================= -->
+
+        <div class="page" id="students">
+
+            <h2>Student Management</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                Registered students and recognition records.
+            </p>
+
+
+            <div class="card">
+
+                <div class="search-row">
+
+                    <input
+                        id="studentSearch"
+                        placeholder="Search student..."
+                        onkeyup="filterStudents()">
+
+                    <button
+                        class="secondary"
+                        onclick="showPage('register')">
+
+                        + Register Student
+
+                    </button>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Last Attendance</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="studentTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= ATTENDANCE ================= -->
+
+        <div class="page" id="attendance">
+
+            <h2>Attendance Records</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                View and manage today's attendance.
+            </p>
+
+
+            <div class="card">
+
+                <div class="buttons">
+
+                    <button
+                        class="primary"
+                        onclick="loadAttendance()">
+
+                        🔄 Refresh
+
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="exportCSV()">
+
+                        ↓ Export CSV
+
+                    </button>
+
+                </div>
+
+
+                <br>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="attendanceTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= REPORTS ================= -->
+
+        <div class="page" id="reports">
+
+            <h2>Attendance Reports</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                Attendance summary and reporting tools.
+            </p>
+
+
+            <div class="cards">
+
+                <div class="card">
+
+                    <div class="stat-label">
+                        Today's Present
+                    </div>
+
+                    <div class="stat-number"
+                         id="reportPresent">
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="stat-label">
+                        Attendance Rate
+                    </div>
+
+                    <div class="stat-number"
+                         id="reportRate">
+                        —
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="section-title">
+
+                    <h3>
+                        Report Actions
+                    </h3>
+
+                </div>
+
+                <button
+                    class="primary"
+                    onclick="exportCSV()">
+
+                    ↓ Download Today's CSV
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= SYSTEM ================= -->
+
+        <div class="page" id="system">
+
+            <h2>System Status</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                Monitor application services.
+            </p>
+
+
+            <div class="card">
+
+                <div class="status-box">
+
+                    <span>
+                        Frontend
+                    </span>
+
+                    <span class="online">
+                        ● Online
+                    </span>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <span>
+                        Camera Access
+                    </span>
+
+                    <span id="cameraSystemStatus">
+                        Checking...
+                    </span>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <span>
+                        Flask Backend
+                    </span>
+
+                    <span id="backendStatus">
+                        Checking...
+                    </span>
+
+                </div>
+
+
+                <div class="status-box">
+
+                    <span>
+                        Recognition API
+                    </span>
+
+                    <span class="online">
+                        Ready
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= ADMIN ================= -->
+
+        <div class="page" id="admin">
+
+            <h2>Administrator Profile</h2>
+
+            <p style="color:#7d879a;margin:6px 0 20px;">
+                System administrator information.
+            </p>
+
+
+            <div class="card">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:20px;
+                ">
+
+                    <div class="admin-avatar"
+                         style="width:70px;height:70px;">
+                        AD
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Administrator
+                        </h3>
+
+                        <p style="
+                            color:#7d879a;
+                            margin-top:5px;
+                        ">
+                            Attendance System Administrator
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</main>
 
 
 <script>
 
-    /*
-    ==================================================
-    IMPORTANT
-    ==================================================
+/* =========================================
+   FLASK BACKEND URL
+========================================= */
 
-    Replace this with your actual Render Flask URL.
-
-    Example:
-
-    const BACKEND_URL =
-    "https://face-recognition-backend.onrender.com";
-
-    ==================================================
-    */
-
-    const BACKEND_URL = "YOUR_RENDER_BACKEND_URL";
+const BACKEND_URL =
+"YOUR_RENDER_BACKEND_URL";
 
 
-    let video = document.getElementById("video");
-    let canvas = document.getElementById("canvas");
+let video =
+document.getElementById("video");
 
-    let stream = null;
+let canvas =
+document.getElementById("canvas");
 
-    let lastRecognizedStudent = null;
+let stream = null;
+
+let attendanceData = [];
 
 
-    // ================================================
-    // START CAMERA
-    // ================================================
+/* =========================================
+   NAVIGATION
+========================================= */
 
-    async function startCamera() {
+function showPage(pageId, element) {
 
-        try {
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+            page.classList.remove("active");
+        });
 
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: false
-            });
+    const page =
+        document.getElementById(pageId);
 
-            video.srcObject = stream;
-
-            document.getElementById("scanBtn").disabled = false;
-
-            document.getElementById("cameraStatus").innerHTML =
-                "🟢 Camera is running.";
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-            document.getElementById("cameraStatus").innerHTML =
-                "❌ Camera access denied or unavailable.";
-
-            alert(
-                "Please allow camera permission in your browser."
-            );
-        }
+    if (page) {
+        page.classList.add("active");
     }
 
 
-    // ================================================
-    // STOP CAMERA
-    // ================================================
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
 
-    function stopCamera() {
 
-        if (stream) {
+    if (element) {
+        element.classList.add("active");
+    }
 
-            stream.getTracks().forEach(track => {
+
+    const titles = {
+
+        dashboard: "Dashboard",
+
+        recognition: "Face Recognition",
+
+        register: "Register Student",
+
+        students: "Student Management",
+
+        attendance: "Attendance Records",
+
+        reports: "Attendance Reports",
+
+        system: "System Status",
+
+        admin: "Administrator Profile"
+
+    };
+
+
+    document.getElementById("pageTitle")
+        .innerText =
+        titles[pageId] || "Dashboard";
+
+
+    if (pageId === "attendance") {
+        loadAttendance();
+    }
+
+    if (pageId === "students") {
+        buildStudentTable();
+    }
+
+    if (pageId === "reports") {
+        updateReports();
+    }
+
+    if (pageId === "system") {
+        checkBackend();
+    }
+
+
+    document
+        .getElementById("sidebar")
+        .classList.remove("open");
+}
+
+
+/* =========================================
+   MOBILE SIDEBAR
+========================================= */
+
+function toggleSidebar() {
+
+    document
+        .getElementById("sidebar")
+        .classList.toggle("open");
+}
+
+
+/* =========================================
+   START CAMERA
+========================================= */
+
+async function startCamera() {
+
+    try {
+
+        stream =
+            await navigator
+            .mediaDevices
+            .getUserMedia({
+
+                video: true,
+
+                audio: false
+
+            });
+
+
+        video.srcObject =
+            stream;
+
+
+        document
+            .getElementById("scanBtn")
+            .disabled = false;
+
+
+        document
+            .getElementById("cameraStatus")
+            .innerText =
+            "● Camera is running";
+
+
+        document
+            .getElementById("cameraSystemStatus")
+            .innerHTML =
+            '<span class="online">● Available</span>';
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        document
+            .getElementById("cameraStatus")
+            .innerText =
+            "Camera permission denied or unavailable.";
+
+    }
+}
+
+
+/* =========================================
+   STOP CAMERA
+========================================= */
+
+function stopCamera() {
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(track => {
                 track.stop();
             });
 
-            stream = null;
+        stream = null;
 
-            video.srcObject = null;
-        }
-
-        document.getElementById("scanBtn").disabled = true;
-
-        document.getElementById("cameraStatus").innerHTML =
-            "Camera stopped.";
     }
 
 
-    // ================================================
-    // SCAN FACE
-    // ================================================
-
-    async function scanFace() {
-
-        if (!stream) {
-
-            alert("Start the camera first.");
-
-            return;
-        }
+    video.srcObject = null;
 
 
-        const width = video.videoWidth;
-        const height = video.videoHeight;
-
-        canvas.width = width;
-        canvas.height = height;
+    document
+        .getElementById("scanBtn")
+        .disabled = true;
 
 
-        const context = canvas.getContext("2d");
+    document
+        .getElementById("cameraStatus")
+        .innerText =
+        "Camera stopped.";
 
-        context.drawImage(
-            video,
-            0,
-            0,
-            width,
-            height
+}
+
+
+/* =========================================
+   SCAN FACE
+========================================= */
+
+async function scanFace() {
+
+    if (!stream) {
+
+        alert(
+            "Please start the camera first."
+        );
+
+        return;
+    }
+
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+
+    const context =
+        canvas.getContext("2d");
+
+
+    context.drawImage(
+        video,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    canvas.toBlob(async blob => {
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "image",
+            blob,
+            "face.jpg"
         );
 
 
-        canvas.toBlob(async function(blob) {
+        document
+            .getElementById("resultText")
+            .innerText =
+            "Recognizing face...";
 
-            if (!blob) {
-
-                alert("Unable to capture image.");
-
-                return;
-            }
-
-
-            const formData = new FormData();
-
-            formData.append(
-                "image",
-                blob,
-                "face.jpg"
-            );
-
-
-            document.getElementById("resultText").innerHTML =
-                "🔍 Recognizing face...";
-
-
-            try {
-
-                const response = await fetch(
-                    BACKEND_URL + "/api/recognize",
-                    {
-                        method: "POST",
-                        body: formData
-                    }
-                );
-
-
-                const data = await response.json();
-
-                console.log("Recognition:", data);
-
-
-                if (data.success) {
-
-                    lastRecognizedStudent = data;
-
-
-                    let name =
-                        data.name ||
-                        data.student_name ||
-                        "Student";
-
-
-                    let studentId =
-                        data.student_id ||
-                        data.id ||
-                        "";
-
-
-                    document.getElementById("resultText").innerHTML =
-
-                        `<span class="success">
-                        ✅ Face Recognized
-                        <br><br>
-                        <strong>Name:</strong> ${name}
-                        <br>
-                        <strong>Student ID:</strong> ${studentId}
-                        </span>`;
-
-                    loadAttendance();
-
-                }
-
-                else {
-
-                    document.getElementById("resultText").innerHTML =
-
-                        `<span class="error">
-                        ❌ Face not recognized.
-                        </span>`;
-                }
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-                document.getElementById("resultText").innerHTML =
-
-                    `<span class="error">
-                    ❌ Backend connection failed.
-                    <br><br>
-                    Check your Flask/Render backend.
-                    </span>`;
-            }
-
-        }, "image/jpeg");
-
-    }
-
-
-    // ================================================
-    // REGISTER STUDENT
-    // ================================================
-
-    async function registerStudent() {
-
-        const name =
-            document.getElementById("studentName").value.trim();
-
-        const studentId =
-            document.getElementById("studentId").value.trim();
-
-
-        if (!name || !studentId) {
-
-            alert(
-                "Enter student name and student ID."
-            );
-
-            return;
-        }
-
-
-        if (!stream) {
-
-            alert(
-                "Start the camera first."
-            );
-
-            return;
-        }
-
-
-        const width = video.videoWidth;
-        const height = video.videoHeight;
-
-
-        canvas.width = width;
-        canvas.height = height;
-
-
-        const context =
-            canvas.getContext("2d");
-
-
-        context.drawImage(
-            video,
-            0,
-            0,
-            width,
-            height
-        );
-
-
-        canvas.toBlob(async function(blob) {
-
-            const formData =
-                new FormData();
-
-
-            formData.append(
-                "name",
-                name
-            );
-
-
-            formData.append(
-                "student_id",
-                studentId
-            );
-
-
-            formData.append(
-                "image",
-                blob,
-                "student.jpg"
-            );
-
-
-            document.getElementById(
-                "registerStatus"
-            ).innerHTML =
-                "Registering face...";
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        BACKEND_URL + "/api/register",
-                        {
-                            method: "POST",
-                            body: formData
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                console.log(
-                    "Registration:",
-                    data
-                );
-
-
-                if (data.success) {
-
-                    document.getElementById(
-                        "registerStatus"
-                    ).innerHTML =
-                        `<span class="success">
-                        ✅ Student registered successfully.
-                        </span>`;
-
-                    document.getElementById(
-                        "studentName"
-                    ).value = "";
-
-                    document.getElementById(
-                        "studentId"
-                    ).value = "";
-
-                }
-
-                else {
-
-                    document.getElementById(
-                        "registerStatus"
-                    ).innerHTML =
-                        `<span class="error">
-                        ❌ ${data.message || "Registration failed."}
-                        </span>`;
-                }
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-                document.getElementById(
-                    "registerStatus"
-                ).innerHTML =
-                    `<span class="error">
-                    ❌ Cannot connect to Flask backend.
-                    </span>`;
-            }
-
-        }, "image/jpeg");
-
-    }
-
-
-    // ================================================
-    // LOAD ATTENDANCE
-    // ================================================
-
-    async function loadAttendance() {
 
         try {
 
             const response =
                 await fetch(
-                    BACKEND_URL + "/api/attendance"
+                    BACKEND_URL +
+                    "/api/recognize",
+                    {
+
+                        method: "POST",
+
+                        body: formData
+
+                    }
                 );
 
 
@@ -697,83 +1473,746 @@
                 await response.json();
 
 
-            console.log(
-                "Attendance:",
-                data
-            );
+            if (data.success) {
+
+                const name =
+                    data.name ||
+                    data.student_name ||
+                    "Student";
 
 
-            const table =
-                document.getElementById(
-                    "attendanceTable"
+                const studentId =
+                    data.student_id ||
+                    data.id ||
+                    "";
+
+
+                document
+                    .getElementById("resultText")
+                    .innerHTML =
+                    "✓ Face Recognized<br>" +
+                    "<strong>" +
+                    name +
+                    "</strong>" +
+                    "<br>Student ID: " +
+                    studentId;
+
+
+                addActivity(
+                    name,
+                    studentId
                 );
 
 
-            table.innerHTML = "";
+                loadAttendance();
 
-
-            if (
-                !data.success ||
-                !data.attendance ||
-                data.attendance.length === 0
-            ) {
-
-                table.innerHTML =
-
-                    `<tr>
-                    <td colspan="3">
-                    No attendance records today.
-                    </td>
-                    </tr>`;
-
-                return;
             }
 
+            else {
 
-            data.attendance.forEach(
-                record => {
+                document
+                    .getElementById("resultText")
+                    .innerText =
+                    "Face not recognized.";
 
-                    const row =
-                        document.createElement("tr");
-
-
-                    row.innerHTML =
-
-                        `<td>
-                        ${record.student_id || record.id || ""}
-                        </td>
-
-                        <td>
-                        ${record.name || ""}
-                        </td>
-
-                        <td>
-                        ${record.time || record.timestamp || ""}
-                        </td>`;
-
-
-                    table.appendChild(row);
-
-                }
-            );
+            }
 
         }
 
-        catch (error) {
+        catch(error) {
 
             console.error(error);
 
-            document.getElementById(
-                "attendanceTable"
-            ).innerHTML =
+            document
+                .getElementById("resultText")
+                .innerText =
+                "Unable to connect to Flask backend.";
 
-                `<tr>
-                <td colspan="3">
-                ❌ Backend not connected.
-                </td>
-                </tr>`;
         }
+
+    }, "image/jpeg");
+
+}
+
+
+/* =========================================
+   REGISTER STUDENT
+========================================= */
+
+async function registerStudent() {
+
+    const name =
+        document
+        .getElementById("studentName")
+        .value.trim();
+
+
+    const studentId =
+        document
+        .getElementById("studentId")
+        .value.trim();
+
+
+    if (!name || !studentId) {
+
+        alert(
+            "Enter student name and Student ID."
+        );
+
+        return;
     }
+
+
+    if (!stream) {
+
+        alert(
+            "Start the camera first."
+        );
+
+        return;
+    }
+
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
+
+
+    canvas
+        .getContext("2d")
+        .drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+    canvas.toBlob(async blob => {
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "name",
+            name
+        );
+
+
+        formData.append(
+            "student_id",
+            studentId
+        );
+
+
+        formData.append(
+            "image",
+            blob,
+            "student.jpg"
+        );
+
+
+        document
+            .getElementById("registerStatus")
+            .innerText =
+            "Registering student...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    BACKEND_URL +
+                    "/api/register",
+                    {
+
+                        method: "POST",
+
+                        body: formData
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+                document
+                    .getElementById("registerStatus")
+                    .innerHTML =
+                    '<span style="color:#138a55">' +
+                    "✓ Student registered successfully." +
+                    "</span>";
+
+
+                document
+                    .getElementById("studentName")
+                    .value = "";
+
+
+                document
+                    .getElementById("studentId")
+                    .value = "";
+
+            }
+
+            else {
+
+                document
+                    .getElementById("registerStatus")
+                    .innerText =
+                    data.message ||
+                    "Registration failed.";
+
+            }
+
+        }
+
+        catch(error) {
+
+            console.error(error);
+
+            document
+                .getElementById("registerStatus")
+                .innerText =
+                "Unable to connect to Flask backend.";
+
+        }
+
+    }, "image/jpeg");
+
+}
+
+
+/* =========================================
+   LOAD ATTENDANCE
+========================================= */
+
+async function loadAttendance() {
+
+    try {
+
+        const response =
+            await fetch(
+                BACKEND_URL +
+                "/api/attendance"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        attendanceData =
+            data.attendance || [];
+
+
+        renderAttendance();
+
+
+        updateDashboardStats();
+
+
+        buildStudentTable();
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        attendanceData = [];
+
+        renderAttendance();
+
+    }
+
+}
+
+
+/* =========================================
+   RENDER ATTENDANCE
+========================================= */
+
+function renderAttendance() {
+
+    const tables = [
+
+        document.getElementById(
+            "attendanceTable"
+        ),
+
+        document.getElementById(
+            "dashboardTable"
+        )
+
+    ];
+
+
+    tables.forEach(table => {
+
+        if (!table) return;
+
+
+        table.innerHTML = "";
+
+
+        if (
+            attendanceData.length === 0
+        ) {
+
+            const colspan =
+                table.id ===
+                "dashboardTable"
+                ? 4
+                : 4;
+
+
+            table.innerHTML =
+                `<tr>
+                    <td colspan="${colspan}">
+                        No attendance records today.
+                    </td>
+                </tr>`;
+
+            return;
+        }
+
+
+        attendanceData.forEach(record => {
+
+            const id =
+                record.student_id ||
+                record.id ||
+                "";
+
+
+            const name =
+                record.name ||
+                "";
+
+
+            const time =
+                record.time ||
+                record.timestamp ||
+                "";
+
+
+            const row =
+                document.createElement("tr");
+
+
+            if (
+                table.id ===
+                "dashboardTable"
+            ) {
+
+                row.innerHTML =
+
+                `<td>${id}</td>
+                 <td>${name}</td>
+                 <td>${time}</td>
+                 <td>
+                    <span class="badge">
+                        Present
+                    </span>
+                 </td>`;
+
+            }
+
+            else {
+
+                row.innerHTML =
+
+                `<td>${id}</td>
+                 <td>${name}</td>
+                 <td>${time}</td>
+                 <td>
+                    <span class="badge">
+                        Present
+                    </span>
+                 </td>`;
+
+            }
+
+
+            table.appendChild(row);
+
+        });
+
+    });
+
+}
+
+
+/* =========================================
+   DASHBOARD STATS
+========================================= */
+
+function updateDashboardStats() {
+
+    const present =
+        attendanceData.length;
+
+
+    document
+        .getElementById("presentToday")
+        .innerText =
+        present;
+
+
+    document
+        .getElementById("reportPresent")
+        .innerText =
+        present;
+
+
+    document
+        .getElementById("totalStudents")
+        .innerText =
+        present;
+
+
+    let rate =
+        present > 0 ? "100%" : "0%";
+
+
+    document
+        .getElementById("attendanceRate")
+        .innerText =
+        rate;
+
+
+    document
+        .getElementById("reportRate")
+        .innerText =
+        rate;
+
+}
+
+
+/* =========================================
+   STUDENT TABLE
+========================================= */
+
+function buildStudentTable() {
+
+    const table =
+        document.getElementById(
+            "studentTable"
+        );
+
+
+    if (!table) return;
+
+
+    table.innerHTML = "";
+
+
+    attendanceData.forEach(record => {
+
+        const id =
+            record.student_id ||
+            record.id ||
+            "";
+
+
+        const name =
+            record.name ||
+            "";
+
+
+        const time =
+            record.time ||
+            record.timestamp ||
+            "";
+
+
+        table.innerHTML +=
+
+        `<tr>
+
+            <td>${id}</td>
+
+            <td>${name}</td>
+
+            <td>${time}</td>
+
+            <td>
+                <span class="badge">
+                    Active
+                </span>
+            </td>
+
+        </tr>`;
+
+    });
+
+
+    if (attendanceData.length === 0) {
+
+        table.innerHTML =
+
+        `<tr>
+            <td colspan="4">
+                No student records available.
+            </td>
+        </tr>`;
+
+    }
+
+}
+
+
+/* =========================================
+   SEARCH STUDENTS
+========================================= */
+
+function filterStudents() {
+
+    const search =
+        document
+        .getElementById(
+            "studentSearch"
+        )
+        .value
+        .toLowerCase();
+
+
+    document
+        .querySelectorAll(
+            "#studentTable tr"
+        )
+        .forEach(row => {
+
+            row.style.display =
+                row.innerText
+                .toLowerCase()
+                .includes(search)
+                ? ""
+                : "none";
+
+        });
+
+}
+
+
+/* =========================================
+   EXPORT CSV
+========================================= */
+
+function exportCSV() {
+
+    if (
+        attendanceData.length === 0
+    ) {
+
+        alert(
+            "No attendance records to export."
+        );
+
+        return;
+    }
+
+
+    let csv =
+        "Student ID,Name,Time,Status\n";
+
+
+    attendanceData.forEach(record => {
+
+        const id =
+            record.student_id ||
+            record.id ||
+            "";
+
+
+        const name =
+            record.name ||
+            "";
+
+
+        const time =
+            record.time ||
+            record.timestamp ||
+            "";
+
+
+        csv +=
+            `"${id}","${name}","${time}","Present"\n`;
+
+    });
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {type:"text/csv"}
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+
+    a.href = url;
+
+    a.download =
+        "attendance.csv";
+
+
+    a.click();
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================
+   ACTIVITY
+========================================= */
+
+function addActivity(
+    name,
+    studentId
+) {
+
+    const activity =
+        document.getElementById(
+            "activity"
+        );
+
+
+    const div =
+        document.createElement("div");
+
+
+    div.className =
+        "activity";
+
+
+    div.innerHTML =
+
+    `<div class="activity-icon">
+        ✓
+     </div>
+
+     <div>
+
+        <p>
+            ${name} marked present
+        </p>
+
+        <small>
+            Student ID: ${studentId}
+        </small>
+
+     </div>`;
+
+
+    activity.prepend(div);
+
+}
+
+
+/* =========================================
+   SYSTEM CHECK
+========================================= */
+
+async function checkBackend() {
+
+    const status =
+        document.getElementById(
+            "backendStatus"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                BACKEND_URL + "/",
+                {
+                    method: "GET"
+                }
+            );
+
+
+        if (response.ok) {
+
+            status.innerHTML =
+                '<span class="online">● Online</span>';
+
+        }
+
+        else {
+
+            status.innerText =
+                "Unavailable";
+
+        }
+
+    }
+
+    catch(error) {
+
+        status.innerText =
+            "Offline";
+
+    }
+
+}
+
+
+/* =========================================
+   REPORTS
+========================================= */
+
+function updateReports() {
+
+    document
+        .getElementById("reportPresent")
+        .innerText =
+        attendanceData.length;
+
+
+    document
+        .getElementById("reportRate")
+        .innerText =
+        attendanceData.length > 0
+        ? "100%"
+        : "0%";
+
+}
+
+
+/* =========================================
+   DATE
+========================================= */
+
+document
+    .getElementById("todayDate")
+    .innerText =
+    new Date().toLocaleDateString();
+
+
+/* =========================================
+   INITIAL LOAD
+========================================= */
+
+loadAttendance();
 
 </script>
 
