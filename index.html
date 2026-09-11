@@ -1,2158 +1,779 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>AI SmartAttend | Intelligent Attendance System</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
-:root{
-    --primary:#2563eb;
-    --primary-dark:#1d4ed8;
-    --bg:#f5f7fb;
-    --white:#ffffff;
-    --text:#172033;
-    --muted:#6b7280;
-    --border:#e5e7eb;
-    --success:#16a34a;
-    --warning:#f59e0b;
-    --danger:#dc2626;
-    --sidebar:#111827;
-}
-
-body{
-    background:var(--bg);
-    color:var(--text);
-}
-
-/* LOGIN */
-.login-page{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-        radial-gradient(circle at top left,#2563eb 0%,transparent 35%),
-        linear-gradient(135deg,#0f172a,#1e3a8a);
-    padding:20px;
-}
-
-.login-card{
-    width:420px;
-    max-width:100%;
-    background:white;
-    padding:38px;
-    border-radius:20px;
-    box-shadow:0 25px 60px rgba(0,0,0,.25);
-}
-
-.logo-box{
-    text-align:center;
-    margin-bottom:28px;
-}
-
-.logo-icon{
-    width:65px;
-    height:65px;
-    margin:auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:18px;
-    background:var(--primary);
-    color:white;
-    font-size:30px;
-    font-weight:bold;
-}
-
-.logo-box h1{
-    margin-top:14px;
-    font-size:25px;
-}
-
-.logo-box p{
-    color:var(--muted);
-    margin-top:6px;
-    font-size:14px;
-}
-
-.form-group{
-    margin-bottom:18px;
-}
-
-.form-group label{
-    display:block;
-    margin-bottom:7px;
-    font-size:14px;
-    font-weight:bold;
-}
-
-.form-group input,
-.form-group select{
-    width:100%;
-    padding:13px;
-    border:1px solid var(--border);
-    border-radius:10px;
-    outline:none;
-    font-size:14px;
-}
-
-.form-group input:focus,
-.form-group select:focus{
-    border-color:var(--primary);
-}
-
-.login-btn{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    background:var(--primary);
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-    font-size:15px;
-}
-
-.login-btn:hover{
-    background:var(--primary-dark);
-}
-
-.demo-note{
-    text-align:center;
-    color:var(--muted);
-    font-size:12px;
-    margin-top:15px;
-}
-
-/* APP */
-.app{
-    display:none;
-    min-height:100vh;
-}
-
-/* SIDEBAR */
-.sidebar{
-    position:fixed;
-    width:250px;
-    height:100vh;
-    left:0;
-    top:0;
-    background:var(--sidebar);
-    color:white;
-    padding:20px 14px;
-    z-index:1000;
-}
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:8px 10px 25px;
-    border-bottom:1px solid rgba(255,255,255,.1);
-}
-
-.brand-icon{
-    width:42px;
-    height:42px;
-    background:var(--primary);
-    border-radius:11px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-}
-
-.brand h2{
-    font-size:16px;
-}
-
-.brand span{
-    color:#94a3b8;
-    font-size:11px;
-}
-
-.nav{
-    margin-top:22px;
-}
-
-.nav-item{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px;
-    margin-bottom:5px;
-    border-radius:9px;
-    cursor:pointer;
-    color:#cbd5e1;
-    font-size:14px;
-}
-
-.nav-item:hover,
-.nav-item.active{
-    background:#1e40af;
-    color:white;
-}
-
-.nav-icon{
-    width:22px;
-    text-align:center;
-}
-
-.logout{
-    position:absolute;
-    bottom:20px;
-    left:14px;
-    right:14px;
-    color:#fca5a5;
-}
-
-/* MAIN */
-.main{
-    margin-left:250px;
-    min-height:100vh;
-}
-
-.topbar{
-    height:70px;
-    background:white;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 30px;
-    position:sticky;
-    top:0;
-    z-index:500;
-}
-
-.mobile-menu{
-    display:none;
-    font-size:24px;
-    cursor:pointer;
-}
-
-.top-title{
-    font-size:18px;
-    font-weight:bold;
-}
-
-.top-right{
-    display:flex;
-    align-items:center;
-    gap:20px;
-}
-
-.notification{
-    font-size:20px;
-    cursor:pointer;
-}
-
-.profile{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.avatar{
-    width:38px;
-    height:38px;
-    background:#dbeafe;
-    color:#1d4ed8;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:bold;
-}
-
-.profile-text small{
-    color:var(--muted);
-    display:block;
-    font-size:11px;
-}
-
-/* CONTENT */
-.content{
-    padding:28px;
-}
-
-.page{
-    display:none;
-}
-
-.page.active{
-    display:block;
-}
-
-.page-heading{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:24px;
-}
-
-.page-heading h1{
-    font-size:25px;
-}
-
-.page-heading p{
-    color:var(--muted);
-    margin-top:5px;
-    font-size:14px;
-}
-
-.primary-btn{
-    border:none;
-    background:var(--primary);
-    color:white;
-    padding:11px 16px;
-    border-radius:9px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.primary-btn:hover{
-    background:var(--primary-dark);
-}
-
-/* STAT CARDS */
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
-    margin-bottom:24px;
-}
-
-.stat-card{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.stat-info p{
-    color:var(--muted);
-    font-size:13px;
-}
-
-.stat-info h2{
-    margin-top:8px;
-    font-size:28px;
-}
-
-.stat-icon{
-    width:48px;
-    height:48px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-    background:#eff6ff;
-}
-
-/* GRID */
-.dashboard-grid{
-    display:grid;
-    grid-template-columns:1.5fr 1fr;
-    gap:20px;
-    margin-bottom:24px;
-}
-
-.card{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:20px;
-}
-
-.card-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-.card-header h3{
-    font-size:16px;
-}
-
-.card-header span{
-    color:var(--muted);
-    font-size:12px;
-}
-
-/* CHART */
-.chart{
-    height:250px;
-    display:flex;
-    align-items:end;
-    gap:15px;
-    padding:15px 10px 0;
-}
-
-.bar-wrap{
-    flex:1;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:end;
-    align-items:center;
-    gap:7px;
-}
-
-.bar{
-    width:100%;
-    max-width:42px;
-    background:linear-gradient(to top,#2563eb,#60a5fa);
-    border-radius:7px 7px 2px 2px;
-}
-
-.bar-label{
-    font-size:11px;
-    color:var(--muted);
-}
-
-/* CAMERA */
-.camera{
-    height:220px;
-    border-radius:12px;
-    background:#0f172a;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    color:white;
-    position:relative;
-    overflow:hidden;
-}
-
-.camera-box{
-    width:180px;
-    height:130px;
-    border:2px solid #60a5fa;
-    border-radius:10px;
-    position:relative;
-}
-
-.camera-box:before,
-.camera-box:after{
-    content:"";
-    position:absolute;
-    width:20px;
-    height:20px;
-    border-color:white;
-}
-
-.camera-status{
-    margin-top:15px;
-    color:#86efac;
-    font-size:12px;
-}
-
-.scan-line{
-    position:absolute;
-    left:0;
-    right:0;
-    height:2px;
-    background:#60a5fa;
-    animation:scan 2s infinite;
-}
-
-@keyframes scan{
-    0%{top:0}
-    50%{top:100%}
-    100%{top:0}
-}
-
-/* TABLE */
-.table-card{
-    background:white;
-    border:1px solid var(--border);
-    border-radius:14px;
-    overflow:hidden;
-}
-
-.table-header{
-    padding:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.search{
-    padding:9px 12px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    outline:none;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th,td{
-    padding:14px 20px;
-    text-align:left;
-    border-top:1px solid var(--border);
-    font-size:13px;
-}
-
-th{
-    color:var(--muted);
-    font-size:12px;
-    background:#f8fafc;
-}
-
-.status{
-    padding:5px 9px;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:bold;
-}
-
-.present{
-    background:#dcfce7;
-    color:#15803d;
-}
-
-.absent{
-    background:#fee2e2;
-    color:#b91c1c;
-}
-
-.late{
-    background:#fef3c7;
-    color:#a16207;
-}
-
-/* RECOGNITION */
-.recognition-grid{
-    display:grid;
-    grid-template-columns:1.5fr 1fr;
-    gap:20px;
-}
-
-.large-camera{
-    height:480px;
-    background:#020617;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    position:relative;
-    overflow:hidden;
-}
-
-.face-frame{
-    width:270px;
-    height:330px;
-    border:3px solid #22c55e;
-    border-radius:140px 140px 100px 100px;
-    position:relative;
-}
-
-.face-scan{
-    position:absolute;
-    width:100%;
-    height:3px;
-    background:#22c55e;
-    animation:facescan 2s infinite;
-}
-
-@keyframes facescan{
-    0%{top:0}
-    100%{top:100%}
-}
-
-.camera-overlay{
-    position:absolute;
-    top:18px;
-    left:18px;
-    right:18px;
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-}
-
-.live{
-    background:#16a34a;
-    padding:6px 10px;
-    border-radius:20px;
-}
-
-.recognition-result{
-    margin-top:15px;
-    background:#f0fdf4;
-    border:1px solid #bbf7d0;
-    color:#166534;
-    padding:13px;
-    border-radius:10px;
-    text-align:center;
-}
-
-/* FORM */
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
-
-.form-full{
-    grid-column:1/-1;
-}
-
-/* ANALYTICS */
-.analytics-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-}
-
-.progress{
-    margin-bottom:18px;
-}
-
-.progress-head{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:7px;
-    font-size:13px;
-}
-
-.progress-bar{
-    height:9px;
-    background:#e5e7eb;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-fill{
-    height:100%;
-    background:#2563eb;
-    border-radius:20px;
-}
-
-/* ALERT */
-.alert{
-    display:flex;
-    gap:12px;
-    padding:14px;
-    border-radius:10px;
-    margin-bottom:10px;
-    background:#fffbeb;
-    border:1px solid #fde68a;
-}
-
-.alert strong{
-    font-size:13px;
-}
-
-.alert p{
-    color:#92400e;
-    font-size:12px;
-    margin-top:3px;
-}
-
-/* MODAL */
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,.6);
-    z-index:2000;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
-
-.modal.show{
-    display:flex;
-}
-
-.modal-box{
-    width:500px;
-    max-width:100%;
-    background:white;
-    border-radius:16px;
-    padding:25px;
-}
-
-.modal-header{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:20px;
-}
-
-.close{
-    font-size:24px;
-    cursor:pointer;
-    color:var(--muted);
-}
-
-/* RESPONSIVE */
-@media(max-width:1000px){
-    .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .dashboard-grid,
-    .recognition-grid,
-    .analytics-grid{
-        grid-template-columns:1fr;
-    }
-}
-
-@media(max-width:750px){
-    .sidebar{
-        transform:translateX(-100%);
-        transition:.3s;
-    }
-
-    .sidebar.open{
-        transform:translateX(0);
-    }
-
-    .main{
-        margin-left:0;
-    }
-
-    .mobile-menu{
-        display:block;
-    }
-
-    .top-title{
-        display:none;
-    }
-
-    .content{
-        padding:18px;
-    }
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-        gap:10px;
-    }
-
-    .stat-card{
-        padding:14px;
-    }
-
-    .stat-info h2{
-        font-size:22px;
-    }
-
-    .profile-text{
-        display:none;
-    }
-
-    .page-heading{
-        align-items:flex-start;
-        gap:10px;
-    }
-
-    .page-heading h1{
-        font-size:20px;
-    }
-
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .form-full{
-        grid-column:auto;
-    }
-
-    table{
-        min-width:650px;
-    }
-
-    .table-card{
-        overflow-x:auto;
-    }
-}
-
-@media(max-width:450px){
-    .stats{
-        grid-template-columns:1fr;
-    }
-
-    .topbar{
-        padding:0 15px;
-    }
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartFace Attendance</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #0b1020;
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 20px;
+            text-align: center;
+            background: #11182d;
+            border-bottom: 1px solid #26304d;
+        }
+
+        header h1 {
+            font-size: 26px;
+        }
+
+        header p {
+            color: #aab3cc;
+            margin-top: 7px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1000px;
+            margin: 25px auto;
+        }
+
+        .card {
+            background: #121a30;
+            border: 1px solid #26304d;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+        }
+
+        .camera-box {
+            width: 100%;
+            max-width: 650px;
+            margin: auto;
+            background: black;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid #26304d;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            background: black;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        button {
+            border: none;
+            padding: 13px 18px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .start {
+            background: #2563eb;
+            color: white;
+        }
+
+        .scan {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .stop {
+            background: #dc2626;
+            color: white;
+        }
+
+        .attendance {
+            background: #059669;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #0b1020;
+            border: 1px solid #26304d;
+        }
+
+        .success {
+            color: #34d399;
+        }
+
+        .error {
+            color: #f87171;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border: 1px solid #34405f;
+            background: #0b1020;
+            color: white;
+            font-size: 15px;
+        }
+
+        .register-button {
+            background: #2563eb;
+            color: white;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #293451;
+            text-align: left;
+        }
+
+        th {
+            color: #aab3cc;
+        }
+
+        .status {
+            margin-top: 15px;
+            color: #aab3cc;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                width: 92%;
+            }
+
+            button {
+                flex: 1;
+                min-width: 100px;
+            }
+
+            th, td {
+                font-size: 13px;
+                padding: 8px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<header>
+    <h1>SmartFace Attendance</h1>
+    <p>Real-time AI Face Recognition Attendance System</p>
+</header>
 
-<div class="login-page" id="loginPage">
+<div class="container">
 
-```
-<div class="login-card">
+    <!-- CAMERA -->
+    <div class="card">
 
-    <div class="logo-box">
-        <div class="logo-icon">AI</div>
-        <h1>AI SmartAttend</h1>
-        <p>Intelligent Attendance Management System</p>
+        <h2>📷 Face Recognition</h2>
+
+        <div class="camera-box">
+            <video id="video" autoplay playsinline></video>
+        </div>
+
+        <canvas id="canvas" style="display:none;"></canvas>
+
+        <div class="buttons">
+
+            <button class="start" onclick="startCamera()">
+                ▶ Start Camera
+            </button>
+
+            <button class="scan" onclick="scanFace()" id="scanBtn" disabled>
+                🔍 Scan Face
+            </button>
+
+            <button class="stop" onclick="stopCamera()">
+                ⏹ Stop Camera
+            </button>
+
+        </div>
+
+        <div id="cameraStatus" class="status">
+            Camera is not started.
+        </div>
+
+        <div id="result" class="result">
+            <strong>Recognition Result</strong>
+            <p id="resultText">No face scanned yet.</p>
+        </div>
+
     </div>
 
-    <div class="form-group">
-        <label>Username</label>
-        <input type="text" id="username" placeholder="Enter username">
+
+    <!-- REGISTER STUDENT -->
+
+    <div class="card">
+
+        <h2>👤 Register Student</h2>
+
+        <input
+            type="text"
+            id="studentName"
+            placeholder="Enter student name"
+        >
+
+        <input
+            type="text"
+            id="studentId"
+            placeholder="Enter student ID"
+        >
+
+        <button
+            class="register-button"
+            onclick="registerStudent()">
+            Register Face
+        </button>
+
+        <p id="registerStatus" class="status"></p>
+
     </div>
 
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="password" placeholder="Enter password">
+
+    <!-- ATTENDANCE -->
+
+    <div class="card">
+
+        <h2>📊 Today's Attendance</h2>
+
+        <button
+            class="attendance"
+            onclick="loadAttendance()">
+            🔄 Refresh Attendance
+        </button>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+
+            <tbody id="attendanceTable">
+
+                <tr>
+                    <td colspan="3">
+                        No attendance loaded.
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
     </div>
-
-    <button class="login-btn" onclick="login()">Sign In</button>
-
-    <p class="demo-note">
-        Demo login: admin / admin123
-    </p>
-
-</div>
-```
-
-</div>
-
-<!-- APPLICATION -->
-
-<div class="app" id="app">
-
-```
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-
-    <div class="brand">
-        <div class="brand-icon">AI</div>
-
-        <div>
-            <h2>SmartAttend</h2>
-            <span>AI Attendance Platform</span>
-        </div>
-    </div>
-
-    <nav class="nav">
-
-        <div class="nav-item active" onclick="showPage('dashboard',this)">
-            <span class="nav-icon">▦</span>
-            Dashboard
-        </div>
-
-        <div class="nav-item" onclick="showPage('students',this)">
-            <span class="nav-icon">👨‍🎓</span>
-            Students
-        </div>
-
-        <div class="nav-item" onclick="showPage('recognition',this)">
-            <span class="nav-icon">◉</span>
-            Face Recognition
-        </div>
-
-        <div class="nav-item" onclick="showPage('attendance',this)">
-            <span class="nav-icon">✓</span>
-            Attendance
-        </div>
-
-        <div class="nav-item" onclick="showPage('subjects',this)">
-            <span class="nav-icon">▤</span>
-            Subjects
-        </div>
-
-        <div class="nav-item" onclick="showPage('analytics',this)">
-            <span class="nav-icon">◒</span>
-            Analytics
-        </div>
-
-        <div class="nav-item" onclick="showPage('reports',this)">
-            <span class="nav-icon">▥</span>
-            Reports
-        </div>
-
-        <div class="nav-item" onclick="showPage('settings',this)">
-            <span class="nav-icon">⚙</span>
-            Settings
-        </div>
-
-        <div class="nav-item logout" onclick="logout()">
-            <span class="nav-icon">⇥</span>
-            Logout
-        </div>
-
-    </nav>
-</aside>
-
-
-<!-- MAIN -->
-<main class="main">
-
-    <header class="topbar">
-
-        <span class="mobile-menu" onclick="toggleSidebar()">☰</span>
-
-        <div class="top-title">
-            AI SmartAttend
-        </div>
-
-        <div class="top-right">
-
-            <div class="notification" onclick="showNotification()">🔔</div>
-
-            <div class="profile">
-
-                <div class="avatar">AD</div>
-
-                <div class="profile-text">
-                    <strong>Administrator</strong>
-                    <small>System Admin</small>
-                </div>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <section class="content">
-
-        <!-- DASHBOARD -->
-        <div class="page active" id="dashboard">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Dashboard</h1>
-                    <p>Overview of today's attendance activity</p>
-                </div>
-
-                <button class="primary-btn" onclick="showPageByName('recognition')">
-                    + Start Attendance
-                </button>
-
-            </div>
-
-
-            <div class="stats">
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Total Students</p>
-                        <h2>128</h2>
-                    </div>
-                    <div class="stat-icon">👨‍🎓</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Present Today</p>
-                        <h2>116</h2>
-                    </div>
-                    <div class="stat-icon">✓</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Attendance Rate</p>
-                        <h2>90.6%</h2>
-                    </div>
-                    <div class="stat-icon">📊</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Absent Today</p>
-                        <h2>12</h2>
-                    </div>
-                    <div class="stat-icon">⚠</div>
-                </div>
-
-            </div>
-
-
-            <div class="dashboard-grid">
-
-                <div class="card">
-
-                    <div class="card-header">
-                        <h3>Weekly Attendance</h3>
-                        <span>Last 7 days</span>
-                    </div>
-
-                    <div class="chart">
-
-                        <div class="bar-wrap">
-                            <div class="bar" style="height:72%"></div>
-                            <span class="bar-label">Mon</span>
-                        </div>
-
-                        <div class="bar-wrap">
-                            <div class="bar" style="height:85%"></div>
-                            <span class="bar-label">Tue</span>
-                        </div>
-
-                        <div class="bar-wrap">
-                            <div class="bar" style="height:78%"></div>
-                            <span class="bar-label">Wed</span>
-                        </div>
-
-                        <div class="bar-wrap">
-                            <div class="bar" style="height:92%"></div>
-                            <span class="bar-label">Thu</span>
-                        </div>
-
-                        <div class="bar-wrap">
-                            <div class="bar" style="height:88%"></div>
-                            <span class="bar-label">Fri</span>
-                        </div>
-
-                        <div class="bar-wrap">
-                            <div class="bar" style="height:80%"></div>
-                            <span class="bar-label">Sat</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="card-header">
-                        <h3>Live Recognition</h3>
-                        <span>Camera Status</span>
-                    </div>
-
-                    <div class="camera">
-
-                        <div class="camera-box">
-                            <div class="scan-line"></div>
-                        </div>
-
-                        <div class="camera-status">
-                            ● Camera Ready
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="table-card">
-
-                <div class="table-header">
-                    <h3>Recent Attendance</h3>
-                    <button class="primary-btn" onclick="showPageByName('attendance')">
-                        View All
-                    </button>
-                </div>
-
-                <table>
-
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Roll Number</th>
-                            <th>Subject</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-                            <td>Rahul Sharma</td>
-                            <td>BCA001</td>
-                            <td>Artificial Intelligence</td>
-                            <td>09:02 AM</td>
-                            <td><span class="status present">Present</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>Ananya Patel</td>
-                            <td>BCA002</td>
-                            <td>Artificial Intelligence</td>
-                            <td>09:03 AM</td>
-                            <td><span class="status present">Present</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>Vikram Kumar</td>
-                            <td>BCA003</td>
-                            <td>Database Management</td>
-                            <td>09:08 AM</td>
-                            <td><span class="status late">Late</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>Priya Singh</td>
-                            <td>BCA004</td>
-                            <td>Web Technology</td>
-                            <td>09:10 AM</td>
-                            <td><span class="status present">Present</span></td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- STUDENTS -->
-        <div class="page" id="students">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Student Management</h1>
-                    <p>Manage registered students and face profiles</p>
-                </div>
-
-                <button class="primary-btn" onclick="openStudentModal()">
-                    + Add Student
-                </button>
-
-            </div>
-
-
-            <div class="table-card">
-
-                <div class="table-header">
-
-                    <h3>Registered Students</h3>
-
-                    <input
-                        class="search"
-                        id="studentSearch"
-                        onkeyup="searchStudents()"
-                        placeholder="Search student..."
-                    >
-
-                </div>
-
-                <table id="studentTable">
-
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Name</th>
-                            <th>Roll Number</th>
-                            <th>Department</th>
-                            <th>Semester</th>
-                            <th>Face Profile</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-                            <td>STU001</td>
-                            <td>Rahul Sharma</td>
-                            <td>BCA001</td>
-                            <td>BCA</td>
-                            <td>VI</td>
-                            <td><span class="status present">Registered</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>STU002</td>
-                            <td>Ananya Patel</td>
-                            <td>BCA002</td>
-                            <td>BCA</td>
-                            <td>VI</td>
-                            <td><span class="status present">Registered</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>STU003</td>
-                            <td>Vikram Kumar</td>
-                            <td>BCA003</td>
-                            <td>BCA</td>
-                            <td>VI</td>
-                            <td><span class="status present">Registered</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>STU004</td>
-                            <td>Priya Singh</td>
-                            <td>BCA004</td>
-                            <td>BCA</td>
-                            <td>VI</td>
-                            <td><span class="status absent">Not Registered</span></td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- RECOGNITION -->
-        <div class="page" id="recognition">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Face Recognition</h1>
-                    <p>AI-powered live attendance recognition</p>
-                </div>
-
-                <button class="primary-btn" onclick="startRecognition()">
-                    Start Camera
-                </button>
-
-            </div>
-
-
-            <div class="recognition-grid">
-
-                <div class="card">
-
-                    <div class="large-camera">
-
-                        <div class="camera-overlay">
-                            <span>CAM-01</span>
-                            <span class="live">● LIVE</span>
-                        </div>
-
-                        <div class="face-frame">
-                            <div class="face-scan"></div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div>
-
-                    <div class="card">
-
-                        <div class="card-header">
-                            <h3>Session Configuration</h3>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Department</label>
-                            <select>
-                                <option>BCA</option>
-                                <option>BBA</option>
-                                <option>B.Com</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Semester</label>
-                            <select>
-                                <option>VI Semester</option>
-                                <option>V Semester</option>
-                                <option>IV Semester</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Subject</label>
-                            <select>
-                                <option>Artificial Intelligence</option>
-                                <option>Database Management</option>
-                                <option>Web Technology</option>
-                                <option>Cyber Security</option>
-                            </select>
-                        </div>
-
-                        <button class="primary-btn" style="width:100%" onclick="startRecognition()">
-                            Start Recognition
-                        </button>
-
-                    </div>
-
-
-                    <div class="card" style="margin-top:20px">
-
-                        <div class="card-header">
-                            <h3>Latest Recognition</h3>
-                        </div>
-
-                        <div class="recognition-result">
-                            ✓ <strong>Rahul Sharma</strong><br>
-                            <small>Face matched successfully • 09:14 AM</small>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ATTENDANCE -->
-        <div class="page" id="attendance">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Attendance Records</h1>
-                    <p>View and manage attendance history</p>
-                </div>
-
-                <button class="primary-btn" onclick="exportCSV()">
-                    ↓ Export CSV
-                </button>
-
-            </div>
-
-
-            <div class="table-card">
-
-                <div class="table-header">
-
-                    <h3>Today's Attendance</h3>
-
-                    <input
-                        class="search"
-                        id="attendanceSearch"
-                        onkeyup="searchAttendance()"
-                        placeholder="Search..."
-                    >
-
-                </div>
-
-                <table id="attendanceTable">
-
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Roll No.</th>
-                            <th>Subject</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-                            <td>Rahul Sharma</td>
-                            <td>BCA001</td>
-                            <td>AI</td>
-                            <td>11-09-2026</td>
-                            <td>09:02 AM</td>
-                            <td><span class="status present">Present</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>Ananya Patel</td>
-                            <td>BCA002</td>
-                            <td>AI</td>
-                            <td>11-09-2026</td>
-                            <td>09:03 AM</td>
-                            <td><span class="status present">Present</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>Vikram Kumar</td>
-                            <td>BCA003</td>
-                            <td>DBMS</td>
-                            <td>11-09-2026</td>
-                            <td>09:08 AM</td>
-                            <td><span class="status late">Late</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>Priya Singh</td>
-                            <td>BCA004</td>
-                            <td>Web Tech</td>
-                            <td>11-09-2026</td>
-                            <td>09:10 AM</td>
-                            <td><span class="status present">Present</span></td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- SUBJECTS -->
-        <div class="page" id="subjects">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Subjects</h1>
-                    <p>Manage academic subjects and classes</p>
-                </div>
-
-                <button class="primary-btn" onclick="alert('Subject creation will be connected to the backend in Version 2.')">
-                    + Add Subject
-                </button>
-
-            </div>
-
-
-            <div class="stats">
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Total Subjects</p>
-                        <h2>6</h2>
-                    </div>
-                    <div class="stat-icon">📚</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Active Classes</p>
-                        <h2>4</h2>
-                    </div>
-                    <div class="stat-icon">🏫</div>
-                </div>
-
-            </div>
-
-
-            <div class="table-card">
-
-                <div class="table-header">
-                    <h3>Subject List</h3>
-                </div>
-
-                <table>
-
-                    <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Subject</th>
-                            <th>Semester</th>
-                            <th>Faculty</th>
-                            <th>Attendance</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        <tr>
-                            <td>BCA-AI</td>
-                            <td>Artificial Intelligence</td>
-                            <td>VI</td>
-                            <td>Dr. Sharma</td>
-                            <td>91%</td>
-                        </tr>
-
-                        <tr>
-                            <td>BCA-DB</td>
-                            <td>Database Management</td>
-                            <td>VI</td>
-                            <td>Prof. Kumar</td>
-                            <td>88%</td>
-                        </tr>
-
-                        <tr>
-                            <td>BCA-WT</td>
-                            <td>Web Technology</td>
-                            <td>VI</td>
-                            <td>Prof. Patel</td>
-                            <td>94%</td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- ANALYTICS -->
-        <div class="page" id="analytics">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Attendance Analytics</h1>
-                    <p>Academic attendance insights</p>
-                </div>
-
-            </div>
-
-
-            <div class="stats">
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Overall Attendance</p>
-                        <h2>90.6%</h2>
-                    </div>
-                    <div class="stat-icon">📈</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Best Subject</p>
-                        <h2>94%</h2>
-                    </div>
-                    <div class="stat-icon">🏆</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Low Attendance</p>
-                        <h2>8</h2>
-                    </div>
-                    <div class="stat-icon">⚠</div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <p>Classes Conducted</p>
-                        <h2>126</h2>
-                    </div>
-                    <div class="stat-icon">🏫</div>
-                </div>
-
-            </div>
-
-
-            <div class="analytics-grid">
-
-                <div class="card">
-
-                    <div class="card-header">
-                        <h3>Subject-wise Attendance</h3>
-                    </div>
-
-                    <div class="progress">
-
-                        <div class="progress-head">
-                            <span>Artificial Intelligence</span>
-                            <strong>91%</strong>
-                        </div>
-
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:91%"></div>
-                        </div>
-
-                    </div>
-
-                    <div class="progress">
-
-                        <div class="progress-head">
-                            <span>Database Management</span>
-                            <strong>88%</strong>
-                        </div>
-
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:88%"></div>
-                        </div>
-
-                    </div>
-
-                    <div class="progress">
-
-                        <div class="progress-head">
-                            <span>Web Technology</span>
-                            <strong>94%</strong>
-                        </div>
-
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:94%"></div>
-                        </div>
-
-                    </div>
-
-                    <div class="progress">
-
-                        <div class="progress-head">
-                            <span>Cyber Security</span>
-                            <strong>86%</strong>
-                        </div>
-
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:86%"></div>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="card-header">
-                        <h3>Attendance Alerts</h3>
-                    </div>
-
-                    <div class="alert">
-                        <div>⚠</div>
-                        <div>
-                            <strong>Low Attendance Detected</strong>
-                            <p>8 students have attendance below 75%.</p>
-                        </div>
-                    </div>
-
-                    <div class="alert">
-                        <div>📊</div>
-                        <div>
-                            <strong>Weekly Attendance Increased</strong>
-                            <p>Attendance improved by 4.2% this week.</p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- REPORTS -->
-        <div class="page" id="reports">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>Reports</h1>
-                    <p>Generate academic attendance reports</p>
-                </div>
-
-            </div>
-
-
-            <div class="analytics-grid">
-
-                <div class="card">
-
-                    <div class="card-header">
-                        <h3>Generate Report</h3>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Report Type</label>
-
-                        <select>
-                            <option>Daily Attendance</option>
-                            <option>Weekly Attendance</option>
-                            <option>Monthly Attendance</option>
-                            <option>Student-wise Report</option>
-                            <option>Subject-wise Report</option>
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label>Department</label>
-
-                        <select>
-                            <option>BCA</option>
-                            <option>BBA</option>
-                            <option>B.Com</option>
-                        </select>
-
-                    </div>
-
-                    <button class="primary-btn" onclick="generateReport()">
-                        Generate Report
-                    </button>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="card-header">
-                        <h3>Available Exports</h3>
-                    </div>
-
-                    <p style="margin-bottom:12px">📄 Daily Attendance Report</p>
-                    <p style="margin-bottom:12px">📊 Monthly Analytics Report</p>
-                    <p style="margin-bottom:12px">👨‍🎓 Student Attendance Report</p>
-                    <p>📚 Subject Attendance Report</p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SETTINGS -->
-        <div class="page" id="settings">
-
-            <div class="page-heading">
-
-                <div>
-                    <h1>System Settings</h1>
-                    <p>Configure SmartAttend</p>
-                </div>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-                        <label>Institution Name</label>
-                        <input value="ABC College of Computer Applications">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Admin Email</label>
-                        <input value="admin@college.edu">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Minimum Attendance Percentage</label>
-                        <input type="number" value="75">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Recognition Confidence</label>
-                        <select>
-                            <option>High</option>
-                            <option>Medium</option>
-                            <option>Low</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <button
-                    class="primary-btn"
-                    onclick="saveSettings()"
-                    style="margin-top:10px"
-                >
-                    Save Settings
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</main>
-```
 
 </div>
 
-<!-- ADD STUDENT MODAL -->
-
-<div class="modal" id="studentModal">
-
-```
-<div class="modal-box">
-
-    <div class="modal-header">
-
-        <h2>Add Student</h2>
-
-        <span class="close" onclick="closeStudentModal()">×</span>
-
-    </div>
-
-
-    <div class="form-grid">
-
-        <div class="form-group">
-            <label>Student Name</label>
-            <input id="newName" placeholder="Enter full name">
-        </div>
-
-        <div class="form-group">
-            <label>Roll Number</label>
-            <input id="newRoll" placeholder="BCA005">
-        </div>
-
-        <div class="form-group">
-            <label>Department</label>
-
-            <select id="newDept">
-                <option>BCA</option>
-                <option>BBA</option>
-                <option>B.Com</option>
-            </select>
-
-        </div>
-
-        <div class="form-group">
-            <label>Semester</label>
-
-            <select id="newSem">
-                <option>VI</option>
-                <option>V</option>
-                <option>IV</option>
-                <option>III</option>
-            </select>
-
-        </div>
-
-    </div>
-
-
-    <button class="primary-btn" onclick="addStudent()">
-        Add Student
-    </button>
-
-</div>
-```
-
-</div>
 
 <script>
 
-/* LOGIN */
+    /*
+    ==================================================
+    IMPORTANT
+    ==================================================
 
-function login(){
+    Replace this with your actual Render Flask URL.
 
-    const username =
-        document.getElementById("username").value.trim();
+    Example:
 
-    const password =
-        document.getElementById("password").value.trim();
+    const BACKEND_URL =
+    "https://face-recognition-backend.onrender.com";
 
-    if(username === "admin" && password === "admin123"){
+    ==================================================
+    */
 
-        document.getElementById("loginPage").style.display="none";
-        document.getElementById("app").style.display="block";
+    const BACKEND_URL = "YOUR_RENDER_BACKEND_URL";
 
-    }else{
 
-        alert("Invalid login.\n\nDemo:\nUsername: admin\nPassword: admin123");
+    let video = document.getElementById("video");
+    let canvas = document.getElementById("canvas");
 
-    }
+    let stream = null;
 
-}
+    let lastRecognizedStudent = null;
 
 
-/* LOGOUT */
+    // ================================================
+    // START CAMERA
+    // ================================================
 
-function logout(){
+    async function startCamera() {
 
-    if(confirm("Are you sure you want to logout?")){
+        try {
 
-        document.getElementById("app").style.display="none";
-        document.getElementById("loginPage").style.display="flex";
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: false
+            });
 
-        document.getElementById("username").value="";
-        document.getElementById("password").value="";
+            video.srcObject = stream;
 
-    }
+            document.getElementById("scanBtn").disabled = false;
 
-}
+            document.getElementById("cameraStatus").innerHTML =
+                "🟢 Camera is running.";
 
+        }
 
-/* PAGE NAVIGATION */
+        catch (error) {
 
-function showPage(pageId, element){
+            console.error(error);
 
-    document.querySelectorAll(".page")
-        .forEach(page => page.classList.remove("active"));
+            document.getElementById("cameraStatus").innerHTML =
+                "❌ Camera access denied or unavailable.";
 
-    document.getElementById(pageId)
-        .classList.add("active");
-
-    document.querySelectorAll(".nav-item")
-        .forEach(item => item.classList.remove("active"));
-
-    if(element){
-        element.classList.add("active");
-    }
-
-    document.getElementById("sidebar")
-        .classList.remove("open");
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
-}
-
-
-function showPageByName(pageId){
-
-    const item = [...document.querySelectorAll(".nav-item")]
-        .find(el => el.getAttribute("onclick") &&
-        el.getAttribute("onclick").includes("'" + pageId + "'"));
-
-    showPage(pageId,item);
-
-}
-
-
-/* MOBILE SIDEBAR */
-
-function toggleSidebar(){
-
-    document.getElementById("sidebar")
-        .classList.toggle("open");
-
-}
-
-
-/* STUDENT MODAL */
-
-function openStudentModal(){
-
-    document.getElementById("studentModal")
-        .classList.add("show");
-
-}
-
-
-function closeStudentModal(){
-
-    document.getElementById("studentModal")
-        .classList.remove("show");
-
-}
-
-
-/* ADD STUDENT */
-
-function addStudent(){
-
-    const name =
-        document.getElementById("newName").value.trim();
-
-    const roll =
-        document.getElementById("newRoll").value.trim();
-
-    const dept =
-        document.getElementById("newDept").value;
-
-    const sem =
-        document.getElementById("newSem").value;
-
-    if(!name || !roll){
-
-        alert("Please enter student name and roll number.");
-        return;
-
-    }
-
-    const table =
-        document.querySelector("#studentTable tbody");
-
-    const row =
-        table.insertRow();
-
-    const id =
-        "STU" + String(table.rows.length).padStart(3,"0");
-
-    row.innerHTML = `
-        <td>${id}</td>
-        <td>${name}</td>
-        <td>${roll}</td>
-        <td>${dept}</td>
-        <td>${sem}</td>
-        <td>
-            <span class="status absent">
-                Not Registered
-            </span>
-        </td>
-    `;
-
-    closeStudentModal();
-
-    document.getElementById("newName").value="";
-    document.getElementById("newRoll").value="";
-
-    alert("Student added successfully.");
-
-}
-
-
-/* SEARCH STUDENTS */
-
-function searchStudents(){
-
-    const input =
-        document.getElementById("studentSearch")
-        .value.toLowerCase();
-
-    const rows =
-        document.querySelectorAll("#studentTable tbody tr");
-
-    rows.forEach(row => {
-
-        row.style.display =
-            row.innerText.toLowerCase().includes(input)
-            ? ""
-            : "none";
-
-    });
-
-}
-
-
-/* SEARCH ATTENDANCE */
-
-function searchAttendance(){
-
-    const input =
-        document.getElementById("attendanceSearch")
-        .value.toLowerCase();
-
-    const rows =
-        document.querySelectorAll("#attendanceTable tbody tr");
-
-    rows.forEach(row => {
-
-        row.style.display =
-            row.innerText.toLowerCase().includes(input)
-            ? ""
-            : "none";
-
-    });
-
-}
-
-
-/* RECOGNITION */
-
-function startRecognition(){
-
-    alert(
-        "Camera module ready.\n\n" +
-        "Version 1 uses a frontend simulation.\n" +
-        "The real webcam + AI recognition will be connected in Version 5."
-    );
-
-}
-
-
-/* NOTIFICATION */
-
-function showNotification(){
-
-    alert(
-        "Notifications\n\n" +
-        "• 8 students have attendance below 75%.\n" +
-        "• Weekly attendance increased by 4.2%.\n" +
-        "• Camera system is ready."
-    );
-
-}
-
-
-/* REPORT */
-
-function generateReport(){
-
-    alert(
-        "Report generated successfully!\n\n" +
-        "Backend PDF/Excel generation will be connected in a later version."
-    );
-
-}
-
-
-/* CSV EXPORT */
-
-function exportCSV(){
-
-    const table =
-        document.getElementById("attendanceTable");
-
-    let csv=[];
-
-    for(let row of table.rows){
-
-        let cells =
-            [...row.cells].map(
-                cell =>
-                `"${cell.innerText.replace(/"/g,'""')}"`
+            alert(
+                "Please allow camera permission in your browser."
             );
-
-        csv.push(cells.join(","));
-
+        }
     }
 
-    const blob =
-        new Blob(
-            [csv.join("\n")],
-            {type:"text/csv"}
+
+    // ================================================
+    // STOP CAMERA
+    // ================================================
+
+    function stopCamera() {
+
+        if (stream) {
+
+            stream.getTracks().forEach(track => {
+                track.stop();
+            });
+
+            stream = null;
+
+            video.srcObject = null;
+        }
+
+        document.getElementById("scanBtn").disabled = true;
+
+        document.getElementById("cameraStatus").innerHTML =
+            "Camera stopped.";
+    }
+
+
+    // ================================================
+    // SCAN FACE
+    // ================================================
+
+    async function scanFace() {
+
+        if (!stream) {
+
+            alert("Start the camera first.");
+
+            return;
+        }
+
+
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+
+        canvas.width = width;
+        canvas.height = height;
+
+
+        const context = canvas.getContext("2d");
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            width,
+            height
         );
 
-    const url =
-        URL.createObjectURL(blob);
 
-    const a =
-        document.createElement("a");
+        canvas.toBlob(async function(blob) {
 
-    a.href=url;
-    a.download="attendance-report.csv";
+            if (!blob) {
 
-    a.click();
+                alert("Unable to capture image.");
 
-    URL.revokeObjectURL(url);
-
-}
+                return;
+            }
 
 
-/* SETTINGS */
+            const formData = new FormData();
 
-function saveSettings(){
+            formData.append(
+                "image",
+                blob,
+                "face.jpg"
+            );
 
-    alert("Settings saved successfully.");
 
-}
+            document.getElementById("resultText").innerHTML =
+                "🔍 Recognizing face...";
 
 
-/* CLOSE MODAL OUTSIDE */
+            try {
 
-window.onclick=function(event){
+                const response = await fetch(
+                    BACKEND_URL + "/api/recognize",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
 
-    const modal =
-        document.getElementById("studentModal");
 
-    if(event.target === modal){
+                const data = await response.json();
 
-        modal.classList.remove("show");
+                console.log("Recognition:", data);
+
+
+                if (data.success) {
+
+                    lastRecognizedStudent = data;
+
+
+                    let name =
+                        data.name ||
+                        data.student_name ||
+                        "Student";
+
+
+                    let studentId =
+                        data.student_id ||
+                        data.id ||
+                        "";
+
+
+                    document.getElementById("resultText").innerHTML =
+
+                        `<span class="success">
+                        ✅ Face Recognized
+                        <br><br>
+                        <strong>Name:</strong> ${name}
+                        <br>
+                        <strong>Student ID:</strong> ${studentId}
+                        </span>`;
+
+                    loadAttendance();
+
+                }
+
+                else {
+
+                    document.getElementById("resultText").innerHTML =
+
+                        `<span class="error">
+                        ❌ Face not recognized.
+                        </span>`;
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById("resultText").innerHTML =
+
+                    `<span class="error">
+                    ❌ Backend connection failed.
+                    <br><br>
+                    Check your Flask/Render backend.
+                    </span>`;
+            }
+
+        }, "image/jpeg");
 
     }
 
-};
+
+    // ================================================
+    // REGISTER STUDENT
+    // ================================================
+
+    async function registerStudent() {
+
+        const name =
+            document.getElementById("studentName").value.trim();
+
+        const studentId =
+            document.getElementById("studentId").value.trim();
+
+
+        if (!name || !studentId) {
+
+            alert(
+                "Enter student name and student ID."
+            );
+
+            return;
+        }
+
+
+        if (!stream) {
+
+            alert(
+                "Start the camera first."
+            );
+
+            return;
+        }
+
+
+        const width = video.videoWidth;
+        const height = video.videoHeight;
+
+
+        canvas.width = width;
+        canvas.height = height;
+
+
+        const context =
+            canvas.getContext("2d");
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        canvas.toBlob(async function(blob) {
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+                "name",
+                name
+            );
+
+
+            formData.append(
+                "student_id",
+                studentId
+            );
+
+
+            formData.append(
+                "image",
+                blob,
+                "student.jpg"
+            );
+
+
+            document.getElementById(
+                "registerStatus"
+            ).innerHTML =
+                "Registering face...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        BACKEND_URL + "/api/register",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Registration:",
+                    data
+                );
+
+
+                if (data.success) {
+
+                    document.getElementById(
+                        "registerStatus"
+                    ).innerHTML =
+                        `<span class="success">
+                        ✅ Student registered successfully.
+                        </span>`;
+
+                    document.getElementById(
+                        "studentName"
+                    ).value = "";
+
+                    document.getElementById(
+                        "studentId"
+                    ).value = "";
+
+                }
+
+                else {
+
+                    document.getElementById(
+                        "registerStatus"
+                    ).innerHTML =
+                        `<span class="error">
+                        ❌ ${data.message || "Registration failed."}
+                        </span>`;
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById(
+                    "registerStatus"
+                ).innerHTML =
+                    `<span class="error">
+                    ❌ Cannot connect to Flask backend.
+                    </span>`;
+            }
+
+        }, "image/jpeg");
+
+    }
+
+
+    // ================================================
+    // LOAD ATTENDANCE
+    // ================================================
+
+    async function loadAttendance() {
+
+        try {
+
+            const response =
+                await fetch(
+                    BACKEND_URL + "/api/attendance"
+                );
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Attendance:",
+                data
+            );
+
+
+            const table =
+                document.getElementById(
+                    "attendanceTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (
+                !data.success ||
+                !data.attendance ||
+                data.attendance.length === 0
+            ) {
+
+                table.innerHTML =
+
+                    `<tr>
+                    <td colspan="3">
+                    No attendance records today.
+                    </td>
+                    </tr>`;
+
+                return;
+            }
+
+
+            data.attendance.forEach(
+                record => {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML =
+
+                        `<td>
+                        ${record.student_id || record.id || ""}
+                        </td>
+
+                        <td>
+                        ${record.name || ""}
+                        </td>
+
+                        <td>
+                        ${record.time || record.timestamp || ""}
+                        </td>`;
+
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            document.getElementById(
+                "attendanceTable"
+            ).innerHTML =
+
+                `<tr>
+                <td colspan="3">
+                ❌ Backend not connected.
+                </td>
+                </tr>`;
+        }
+    }
 
 </script>
 
